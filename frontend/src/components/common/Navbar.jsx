@@ -21,7 +21,7 @@ export default function Navbar() {
               C
             </div>
             <span className="text-lg font-semibold tracking-tight">
-              Conglomerado
+              Convexa
             </span>
             <span className="hidden sm:inline text-indigo-300 text-sm">
               / Admin

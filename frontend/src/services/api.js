@@ -13,9 +13,13 @@ api.interceptors.request.use((config) => {
 });
 
 export const eventosApi = {
-  getAll:   ()        => api.get('/eventos'),
-  getById:  (id)      => api.get(`/eventos/${id}`),
-  create:   (data)    => api.post('/eventos', data),
-  update:   (id, data)=> api.put(`/eventos/${id}`, data),
-  remove:   (id)      => api.delete(`/eventos/${id}`),
+  getAll:   ()         => api.get('/eventos'),
+  getById:  (id)       => api.get(`/eventos/${id}`),
+  create:   (data)     => api.post('/eventos', data),
+  update:   (id, data) => api.put(`/eventos/${id}`, data),
+  remove:   (id)       => api.delete(`/eventos/${id}`),
+};
+
+export const tiposEventoApi = {
+  getAll: () => api.get('/tipos-evento'),
 };

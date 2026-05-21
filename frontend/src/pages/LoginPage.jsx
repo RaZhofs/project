@@ -6,9 +6,9 @@ import Button from '../components/common/Button';
 
 // Credenciales de demo mientras no exista el endpoint POST /api/v1/auth/login
 const DEMO_ADMIN = {
-  correo:   'admin@conglomerado.com',
+  correo:   'admin@convexa.com',
   password: 'admin123',
-  payload:  { id_administrador: 1, nombre: 'Administrador Demo' },
+  payload:  { id_administrador: 1, nombre: 'Admin Demo' },
 };
 
 function validate(correo, password) {
@@ -73,7 +73,7 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center w-14 h-14 bg-indigo-600 rounded-2xl mb-4 shadow-lg">
             <span className="text-white text-2xl font-bold">C</span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-800">Conglomerado</h1>
+          <h1 className="text-2xl font-bold text-slate-800">Convexa</h1>
           <p className="text-slate-500 text-sm mt-1">Panel de Administración</p>
         </div>
 
@@ -125,7 +125,7 @@ export default function LoginPage() {
 
           {/* Hint de demo */}
           <p className="text-center text-xs text-slate-400 mt-6">
-            Demo: admin@conglomerado.com / admin123
+            Demo: admin@convexa.com / admin123
           </p>
         </div>
       </div>

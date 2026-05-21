@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
-    "seed": "node seeders/001_seed_roles.js"
+    "seed": "node seeders/001_seed_roles.js && node seeders/002_seed_tipos_evento.js && node seeders/003_seed_admin_demo.js"
   },
   "keywords": [],
   "author": "",
