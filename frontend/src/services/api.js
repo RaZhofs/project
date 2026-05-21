@@ -32,12 +32,13 @@ export const tiposEventoApi = {
 };
 
 export const colaboradoresApi = {
-  getAll:    ()         => api.get('/colaboradores'),
-  getById:   (id)       => api.get(`/colaboradores/${id}`),
-  getTareas: (id)       => api.get(`/colaboradores/${id}/tareas`),
-  create:    (data)     => api.post('/colaboradores', data),
-  update:    (id, data) => api.put(`/colaboradores/${id}`, data),
-  remove:    (id)       => api.delete(`/colaboradores/${id}`),
+  getAll:     ()         => api.get('/colaboradores'),
+  getById:    (id)       => api.get(`/colaboradores/${id}`),
+  getTareas:  (id)       => api.get(`/colaboradores/${id}/tareas`),
+  getEventos: (id)       => api.get(`/colaboradores/${id}/eventos`),
+  create:     (data)     => api.post('/colaboradores', data),
+  update:     (id, data) => api.put(`/colaboradores/${id}`, data),
+  remove:     (id)       => api.delete(`/colaboradores/${id}`),
 };
 
 export const tareasApi = {
@@ -46,4 +47,16 @@ export const tareasApi = {
   create:  (data)      => api.post('/tareas', data),
   update:  (id, data)  => api.put(`/tareas/${id}`, data),
   remove:  (id)        => api.delete(`/tareas/${id}`),
+};
+
+export const bitacoraApi = {
+  getEntradas:  (id)       => api.get(`/eventos/${id}/bitacora`),
+  crearEntrada: (id, data) => api.post(`/eventos/${id}/bitacora`, data),
+};
+
+export const presupuestoApi = {
+  getItems:   (id)              => api.get(`/eventos/${id}/presupuesto`),
+  crearItem:  (id, data)        => api.post(`/eventos/${id}/presupuesto`, data),
+  updateItem: (id, id_item, data) => api.put(`/eventos/${id}/presupuesto/${id_item}`, data),
+  deleteItem: (id, id_item)     => api.delete(`/eventos/${id}/presupuesto/${id_item}`),
 };

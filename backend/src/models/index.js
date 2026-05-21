@@ -8,6 +8,8 @@ const EquipoColaboradores = require('./EquipoColaboradores.model');
 const TipoEvento          = require('./TipoEvento.model');
 const Evento              = require('./Evento.model');
 const Tarea               = require('./Tarea.model');
+const Bitacora            = require('./Bitacora.model');
+const PresupuestoItem     = require('./PresupuestoItem.model');
 
 // ── ROLES → USUARIOS ──────────────────────────────────────────────────────
 Rol.hasMany(Usuario, { foreignKey: 'id_rol' });
@@ -53,6 +55,14 @@ Tarea.belongsTo(Evento, { foreignKey: 'id_evento' });
 Colaborador.hasMany(Tarea, { foreignKey: 'id_responsable' });
 Tarea.belongsTo(Colaborador, { foreignKey: 'id_responsable', as: 'Responsable' });
 
+// ── EVENTOS → BITACORA ────────────────────────────────────────────────────
+Evento.hasMany(Bitacora, { foreignKey: 'id_evento' });
+Bitacora.belongsTo(Evento, { foreignKey: 'id_evento' });
+
+// ── EVENTOS → PRESUPUESTO_ITEMS ───────────────────────────────────────────
+Evento.hasMany(PresupuestoItem, { foreignKey: 'id_evento' });
+PresupuestoItem.belongsTo(Evento, { foreignKey: 'id_evento' });
+
 module.exports = {
   sequelize,
   Rol,
@@ -63,4 +73,6 @@ module.exports = {
   TipoEvento,
   Evento,
   Tarea,
+  Bitacora,
+  PresupuestoItem,
 };

@@ -7,16 +7,36 @@ import Modal   from '../components/common/Modal';
 import Input   from '../components/common/Input';
 import Select  from '../components/common/Select';
 import { SkeletonBlock } from '../components/common/Skeleton';
-import { eventosApi, colaboradoresApi, tareasApi } from '../services/api';
+import { eventosApi, colaboradoresApi, tareasApi, bitacoraApi, presupuestoApi } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const PRIORIDADES   = ['Alta', 'Media', 'Baja'];
 const ESTADOS_TAREA = ['Pendiente', 'En Proceso', 'Completada'];
 const PERMISOS      = ['Lectura', 'Edición', 'Administración'];
+const TIPOS_ENTRADA  = ['Nota', 'Avance', 'Alerta', 'Incidencia'];
+const TIPOS_PRES     = ['Ingreso', 'Egreso'];
+const ESTADOS_PRES   = ['Pendiente', 'Aprobado', 'Ejecutado'];
+const CATEGORIAS_PRES = ['Infraestructura', 'Marketing', 'Personal', 'Catering', 'Tecnología', 'Logística', 'Otros'];
+
+const TIPO_COLORS = {
+  Nota:       'bg-slate-100 text-slate-600',
+  Avance:     'bg-green-100 text-green-700',
+  Alerta:     'bg-amber-100 text-amber-700',
+  Incidencia: 'bg-red-100   text-red-700',
+};
 
 function fmtDate(iso) {
   if (!iso) return '—';
   return new Intl.DateTimeFormat('es-CL', { day: '2-digit', month: 'short', year: 'numeric' })
     .format(new Date(iso));
+}
+
+function fmtDateTime(iso) {
+  if (!iso) return '—';
+  return new Intl.DateTimeFormat('es-CL', {
+    day: '2-digit', month: 'short', year: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  }).format(new Date(iso));
 }
 
 function toLocalInput(iso) {
@@ -397,8 +417,333 @@ function TabTareas({ id_evento }) {
   );
 }
 
+// ── Tab: Bitácora ──────────────────────────────────────────────────────────
+function TabBitacora({ id_evento }) {
+  const { sesion } = useAuth();
+  const [entradas, setEntradas] = useState([]);
+  const [loading,  setLoading]  = useState(true);
+  const [saving,   setSaving]   = useState(false);
+  const [error,    setError]    = useState('');
+  const [form, setForm] = useState({ contenido: '', tipo_entrada: 'Nota' });
+
+  const fetchEntradas = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data } = await bitacoraApi.getEntradas(id_evento);
+      setEntradas(data.data);
+    } catch (err) {
+      console.error('Error al cargar bitácora:', err.response?.data?.message ?? err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [id_evento]);
+
+  useEffect(() => { fetchEntradas(); }, [fetchEntradas]);
+
+  const handlePublicar = async () => {
+    if (!form.contenido.trim()) return;
+    setSaving(true);
+    setError('');
+    try {
+      await bitacoraApi.crearEntrada(id_evento, {
+        contenido:    form.contenido.trim(),
+        tipo_entrada: form.tipo_entrada,
+        autor_nombre: sesion?.nombre  ?? 'Administrador',
+        autor_rol:    sesion?.rol     ?? 'Administrador',
+      });
+      setForm({ contenido: '', tipo_entrada: 'Nota' });
+      fetchEntradas();
+    } catch (err) {
+      setError(err.response?.data?.message ?? 'Error al publicar la entrada.');
+    } finally { setSaving(false); }
+  };
+
+  return (
+    <div className="mt-4 flex flex-col gap-4">
+
+      {/* Formulario nueva entrada */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+        <p className="text-sm font-medium text-slate-700 mb-3">Nueva entrada</p>
+        <div className="flex gap-2 mb-3">
+          {TIPOS_ENTRADA.map(t => (
+            <button
+              key={t}
+              onClick={() => setForm(p => ({ ...p, tipo_entrada: t }))}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                form.tipo_entrada === t
+                  ? TIPO_COLORS[t] + ' ring-2 ring-offset-1 ring-current'
+                  : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+              }`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+        <textarea
+          rows={3}
+          placeholder="Escribe una nota, avance o incidencia..."
+          className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700
+                     placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-400
+                     resize-none"
+          value={form.contenido}
+          onChange={e => setForm(p => ({ ...p, contenido: e.target.value }))}
+        />
+        {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+        <div className="flex justify-end mt-2">
+          <Button loading={saving} onClick={handlePublicar} disabled={!form.contenido.trim()}>
+            Publicar
+          </Button>
+        </div>
+      </div>
+
+      {/* Feed */}
+      {loading ? (
+        <div className="flex flex-col gap-3">
+          {[...Array(3)].map((_, i) => <SkeletonBlock key={i} className="h-20 w-full rounded-xl" />)}
+        </div>
+      ) : entradas.length === 0 ? (
+        <div className="text-center py-12 text-slate-400">
+          <p className="font-medium">Sin entradas en la bitácora.</p>
+          <p className="text-sm mt-1">Publica la primera nota del evento.</p>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {entradas.map(e => (
+            <div key={e.id_entrada}
+              className="bg-white rounded-xl border border-slate-200 shadow-sm px-5 py-4">
+              <div className="flex items-center gap-2 mb-2">
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${TIPO_COLORS[e.tipo_entrada]}`}>
+                  {e.tipo_entrada}
+                </span>
+                <span className="text-xs text-slate-400">
+                  {e.autor_nombre} · {fmtDateTime(e.fecha_entrada)}
+                </span>
+              </div>
+              <p className="text-sm text-slate-700 whitespace-pre-wrap">{e.contenido}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Tab: Presupuesto ───────────────────────────────────────────────────────
+function fmtMoney(n) {
+  if (n == null) return '—';
+  return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(n);
+}
+
+const EMPTY_FORM = { descripcion: '', categoria: 'Otros', tipo: 'Egreso', monto_estimado: '', monto_real: '', estado: 'Pendiente' };
+
+function TabPresupuesto({ id_evento }) {
+  const [items,      setItems]      = useState([]);
+  const [loading,    setLoading]    = useState(true);
+  const [modalOpen,  setModalOpen]  = useState(false);
+  const [editItem,   setEditItem]   = useState(null);
+  const [saving,     setSaving]     = useState(false);
+  const [saveError,  setSaveError]  = useState('');
+  const [form,       setForm]       = useState(EMPTY_FORM);
+
+  const fetchItems = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data } = await presupuestoApi.getItems(id_evento);
+      setItems(data.data);
+    } catch (err) {
+      console.error('Error al cargar presupuesto:', err.response?.data?.message ?? err.message);
+    } finally { setLoading(false); }
+  }, [id_evento]);
+
+  useEffect(() => { fetchItems(); }, [fetchItems]);
+
+  const abrirNuevo = () => {
+    setEditItem(null);
+    setForm(EMPTY_FORM);
+    setSaveError('');
+    setModalOpen(true);
+  };
+
+  const abrirEditar = (item) => {
+    setEditItem(item);
+    setForm({
+      descripcion:    item.descripcion,
+      categoria:      item.categoria,
+      tipo:           item.tipo,
+      monto_estimado: String(item.monto_estimado),
+      monto_real:     item.monto_real != null ? String(item.monto_real) : '',
+      estado:         item.estado,
+    });
+    setSaveError('');
+    setModalOpen(true);
+  };
+
+  const handleGuardar = async () => {
+    if (!form.descripcion.trim()) { setSaveError('La descripción es obligatoria.'); return; }
+    if (!form.monto_estimado)     { setSaveError('El monto estimado es obligatorio.'); return; }
+    setSaving(true);
+    setSaveError('');
+    const payload = {
+      descripcion:    form.descripcion.trim(),
+      categoria:      form.categoria,
+      tipo:           form.tipo,
+      monto_estimado: Number(form.monto_estimado),
+      monto_real:     form.monto_real !== '' ? Number(form.monto_real) : null,
+      estado:         form.estado,
+    };
+    try {
+      if (editItem) {
+        await presupuestoApi.updateItem(id_evento, editItem.id_item, payload);
+      } else {
+        await presupuestoApi.crearItem(id_evento, payload);
+      }
+      setModalOpen(false);
+      fetchItems();
+    } catch (err) {
+      setSaveError(err.response?.data?.message ?? 'Error al guardar el ítem.');
+    } finally { setSaving(false); }
+  };
+
+  const handleEliminar = async (id_item) => {
+    if (!window.confirm('¿Eliminar este ítem? Esta acción no se puede deshacer.')) return;
+    try {
+      await presupuestoApi.deleteItem(id_evento, id_item);
+      fetchItems();
+    } catch (err) {
+      console.error('Error al eliminar:', err.response?.data?.message ?? err.message);
+    }
+  };
+
+  // Cálculos del resumen
+  const ingresos  = items.filter(i => i.tipo === 'Ingreso').reduce((s, i) => s + Number(i.monto_estimado), 0);
+  const egresos   = items.filter(i => i.tipo === 'Egreso' ).reduce((s, i) => s + Number(i.monto_estimado), 0);
+  const ejecutado = items.filter(i => i.monto_real != null).reduce((s, i) => s + Number(i.monto_real), 0);
+  const balance   = ingresos - egresos;
+
+  if (loading) return (
+    <div className="flex flex-col gap-3 mt-4">
+      {[...Array(4)].map((_, i) => <SkeletonBlock key={i} className="h-14 w-full rounded-xl" />)}
+    </div>
+  );
+
+  return (
+    <div className="mt-4 flex flex-col gap-4">
+
+      {/* Panel de resumen */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { label: 'Ingresos est.',  value: fmtMoney(ingresos),  color: 'text-green-600' },
+          { label: 'Egresos est.',   value: fmtMoney(egresos),   color: 'text-red-500'   },
+          { label: 'Balance',        value: fmtMoney(balance),   color: balance >= 0 ? 'text-green-600' : 'text-red-500' },
+          { label: 'Total ejecutado',value: fmtMoney(ejecutado), color: 'text-indigo-600' },
+        ].map(c => (
+          <div key={c.label} className="bg-white rounded-xl border border-slate-200 shadow-sm px-4 py-3 text-center">
+            <p className={`text-lg font-bold ${c.color}`}>{c.value}</p>
+            <p className="text-xs text-slate-500 mt-0.5">{c.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Cabecera tabla */}
+      <div className="flex justify-between items-center">
+        <p className="text-sm text-slate-500">{items.length} ítem{items.length !== 1 ? 's' : ''}</p>
+        <Button size="sm" onClick={abrirNuevo}>+ Nuevo ítem</Button>
+      </div>
+
+      {items.length === 0 ? (
+        <div className="text-center py-12 text-slate-400">
+          <p className="font-medium">Sin ítems presupuestarios.</p>
+          <p className="text-sm mt-1">Agrega el primer ingreso o egreso.</p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+          <table className="w-full text-sm text-left text-slate-700">
+            <thead className="bg-slate-50 border-b border-slate-200 text-xs text-slate-500 uppercase tracking-wide">
+              <tr>
+                {['Descripción', 'Categoría', 'Tipo', 'Est.', 'Real', 'Estado', ''].map(h => (
+                  <th key={h} className="px-4 py-3 font-medium whitespace-nowrap">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {items.map(item => (
+                <tr key={item.id_item} className="border-b border-slate-100 hover:bg-slate-50">
+                  <td className="px-4 py-3 font-medium text-slate-800 max-w-[180px] truncate">{item.descripcion}</td>
+                  <td className="px-4 py-3 text-slate-500 whitespace-nowrap">{item.categoria}</td>
+                  <td className="px-4 py-3">
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                      item.tipo === 'Ingreso' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'
+                    }`}>{item.tipo}</span>
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-slate-600">{fmtMoney(item.monto_estimado)}</td>
+                  <td className="px-4 py-3 whitespace-nowrap text-slate-500">{fmtMoney(item.monto_real)}</td>
+                  <td className="px-4 py-3">
+                    <Badge label={item.estado} />
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <Button variant="ghost"  size="sm" onClick={() => abrirEditar(item)}>Editar</Button>
+                      <Button variant="danger" size="sm" onClick={() => handleEliminar(item.id_item)}>Eliminar</Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Modal crear / editar */}
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={editItem ? 'Editar ítem' : 'Nuevo ítem presupuestario'}
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setModalOpen(false)}>Cancelar</Button>
+            <Button loading={saving} onClick={handleGuardar}>{editItem ? 'Guardar cambios' : 'Agregar ítem'}</Button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-4">
+          {saveError && (
+            <p className="text-sm text-red-500 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{saveError}</p>
+          )}
+          <Input id="descripcion" label="Descripción *" placeholder="Ej. Alquiler de sonido"
+            value={form.descripcion}
+            onChange={e => setForm(p => ({ ...p, descripcion: e.target.value }))} />
+          <div className="grid grid-cols-2 gap-3">
+            <Select id="categoria" label="Categoría"
+              options={CATEGORIAS_PRES.map(c => ({ value: c, label: c }))}
+              value={form.categoria}
+              onChange={e => setForm(p => ({ ...p, categoria: e.target.value }))} />
+            <Select id="tipo" label="Tipo"
+              options={TIPOS_PRES.map(t => ({ value: t, label: t }))}
+              value={form.tipo}
+              onChange={e => setForm(p => ({ ...p, tipo: e.target.value }))} />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <Input id="monto_estimado" label="Monto estimado *" type="number" min="0" step="1000"
+              placeholder="0"
+              value={form.monto_estimado}
+              onChange={e => setForm(p => ({ ...p, monto_estimado: e.target.value }))} />
+            <Input id="monto_real" label="Monto real" type="number" min="0" step="1000"
+              placeholder="— (opcional)"
+              value={form.monto_real}
+              onChange={e => setForm(p => ({ ...p, monto_real: e.target.value }))} />
+          </div>
+          <Select id="estado" label="Estado"
+            options={ESTADOS_PRES.map(s => ({ value: s, label: s }))}
+            value={form.estado}
+            onChange={e => setForm(p => ({ ...p, estado: e.target.value }))} />
+        </div>
+      </Modal>
+    </div>
+  );
+}
+
 // ── Página principal ───────────────────────────────────────────────────────
-const TABS = ['Equipo', 'Tareas'];
+const TABS = ['Equipo', 'Tareas', 'Bitácora', 'Presupuesto'];
 
 export default function EventoDetallePage() {
   const { id } = useParams();
@@ -471,9 +816,10 @@ export default function EventoDetallePage() {
 
         {/* Contenido del tab */}
         {!loading && evento && (
-          tab === 'Equipo'
-            ? <TabEquipo id_evento={id} />
-            : <TabTareas id_evento={id} />
+          tab === 'Equipo'      ? <TabEquipo      id_evento={id} /> :
+          tab === 'Tareas'      ? <TabTareas      id_evento={id} /> :
+          tab === 'Bitácora'    ? <TabBitacora    id_evento={id} /> :
+                                  <TabPresupuesto id_evento={id} />
         )}
       </main>
     </div>

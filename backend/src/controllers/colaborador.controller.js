@@ -1,4 +1,4 @@
-const { Colaborador, Usuario, Tarea, Evento, TipoEvento } = require('../models');
+const { Colaborador, Usuario, Tarea, Evento, TipoEvento, EquipoColaboradores } = require('../models');
 
 // GET /api/v1/colaboradores
 async function getAll(req, res, next) {
@@ -37,6 +37,23 @@ async function getTareas(req, res, next) {
   } catch (err) { next(err); }
 }
 
+// GET /api/v1/colaboradores/:id/eventos
+async function getEventos(req, res, next) {
+  try {
+    const asignaciones = await EquipoColaboradores.findAll({
+      where: { id_colaborador: req.params.id },
+      include: [{
+        model: Evento,
+        as: 'EVENTO',
+        attributes: ['id_evento', 'nombre_evento', 'estado_evento', 'fecha_inicio', 'fecha_termino'],
+        include: [{ model: TipoEvento, attributes: ['nombre'] }],
+      }],
+    });
+    const eventos = asignaciones.map(a => a.EVENTO).filter(Boolean);
+    res.json({ ok: true, data: eventos });
+  } catch (err) { next(err); }
+}
+
 // POST /api/v1/colaboradores
 async function create(req, res, next) {
   try {
@@ -65,4 +82,4 @@ async function remove(req, res, next) {
   } catch (err) { next(err); }
 }
 
-module.exports = { getAll, getById, getTareas, create, update, remove };
+module.exports = { getAll, getById, getTareas, getEventos, create, update, remove };
