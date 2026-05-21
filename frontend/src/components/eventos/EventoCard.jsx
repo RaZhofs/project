@@ -32,13 +32,18 @@ function EventoCardItem({ ev, onDelete }) {
       {/* Cabecera */}
       <div className="p-5 flex-1">
         <div className="flex items-start justify-between gap-2 mb-3">
-          <h3 className="font-semibold text-slate-800 text-base leading-tight line-clamp-2">
+          <Link
+            to={`/eventos/${ev.id_evento}`}
+            className="font-semibold text-slate-800 text-base leading-tight line-clamp-2
+                       hover:text-indigo-600 transition-colors"
+          >
             {ev.nombre_evento}
-          </h3>
+          </Link>
           <span className="text-xs text-slate-400 whitespace-nowrap">
             #{ev.id_evento}
           </span>
         </div>
+
 
         {/* Badges */}
         <div className="flex flex-wrap gap-1.5 mb-4">

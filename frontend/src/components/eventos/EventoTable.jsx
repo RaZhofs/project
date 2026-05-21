@@ -46,8 +46,13 @@ export default function EventoTable({ eventos, loading, onDelete }) {
               key={ev.id_evento}
               className="border-b border-slate-100 hover:bg-slate-50 transition-colors"
             >
-              <td className="px-4 py-3 font-medium text-slate-800 max-w-[200px] truncate">
-                {ev.nombre_evento}
+              <td className="px-4 py-3 font-medium max-w-[200px] truncate">
+                <Link
+                  to={`/eventos/${ev.id_evento}`}
+                  className="text-indigo-600 hover:text-indigo-800 hover:underline transition-colors"
+                >
+                  {ev.nombre_evento}
+                </Link>
               </td>
               <td className="px-4 py-3 text-slate-500 whitespace-nowrap">
                 {ev.TIPOS_EVENTO?.nombre ?? '—'}

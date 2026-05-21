@@ -1,5 +1,5 @@
 // Bloque de pulso genérico — úsalo para texto, imágenes o filas
-function SkeletonBlock({ className = '' }) {
+export function SkeletonBlock({ className = '' }) {
   return (
     <div className={`animate-pulse bg-slate-200 rounded ${className}`} />
   );
