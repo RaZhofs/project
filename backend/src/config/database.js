@@ -3,11 +3,11 @@ require('dotenv').config();
 
 const sequelize = new Sequelize(
   process.env.DB_NAME,
-  null,
-  null,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
   {
-    host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || 1433,
+    host: process.env.DB_HOST || '127.0.0.1',
+    port: parseInt(process.env.DB_PORT, 10) || 1433,
     dialect: 'mssql',
     logging: false,
     define: {
@@ -15,10 +15,6 @@ const sequelize = new Sequelize(
       freezeTableName: true,
     },
     dialectOptions: {
-      authentication: {
-        type: 'default',
-        options: { trustedConnection: true },
-      },
       options: {
         encrypt: false,
         trustServerCertificate: true,
