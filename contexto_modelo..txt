@@ -1,0 +1,199 @@
+1. Tabla: ROLES
+id_rol (INT, PK)
+
+nombre_rol (VARCHAR)
+
+2. Tabla: USUARIOS
+id_usuario (INT, PK)
+
+nombre (VARCHAR)
+
+correo (VARCHAR, UNIQUE)
+
+password_hash (VARCHAR)
+
+id_rol (INT, FK -> ROLES.id_rol)
+
+3. Tabla: ADMINISTRADORES
+id_administrador (INT, PK)
+
+id_usuario (INT, FK -> USUARIOS.id_usuario)
+
+nombre (VARCHAR)
+
+correo (VARCHAR)
+
+password_hash (VARCHAR)
+
+4. Tabla: TIPOS_EVENTO
+id_tipo (INT, PK)
+
+nombre (VARCHAR)
+
+5. Tabla: EVENTOS (Entidad Núcleo)
+id_evento (INT, PK)
+
+id_administrador (INT, FK -> ADMINISTRADORES.id_administrador)
+
+id_tipo (INT, FK -> TIPOS_EVENTO.id_tipo)
+
+nombre_evento (VARCHAR)
+
+fecha_inicio (DATETIME)
+
+fecha_termino (DATETIME)
+
+aforo_maximo (INT)
+
+estado_evento (VARCHAR) (Ej: Planificación, Montaje, Ejecución, Finalizado, Cancelado)
+
+modalidad_evento (VARCHAR) (Ej: Desde cero, Express)
+
+ubicacion_texto (VARCHAR)
+
+creado_by (INT)
+
+6. Tabla: PRESUPUESTO
+id_presupuesto (INT, PK)
+
+id_evento (INT, FK -> EVENTOS.id_evento)
+
+capital_inicial (DECIMAL)
+
+monto_operativo (DECIMAL)
+
+monto_remanente (DECIMAL)
+
+solicitud_estado (VARCHAR)
+
+fecha_definicion (DATETIME)
+
+7. Tabla: COLABORADORES
+id_colaborador (INT, PK)
+
+id_usuario (INT, FK -> USUARIOS.id_usuario)
+
+nombre_completo (VARCHAR)
+
+correo_empresa (VARCHAR)
+
+telefono (VARCHAR)
+
+8. Tabla: EQUIPO_COLABORADORES (Tabla Pivot / Relación de asignación)
+id_evento (INT, FK -> EVENTOS.id_evento)
+
+id_colaborador (INT, FK -> COLABORADORES.id_colaborador)
+
+permiso_nivel (VARCHAR)
+
+fecha_asignacion (DATETIME)
+
+9. Tabla: TAREAS
+id_tarea (INT, PK)
+
+id_evento (INT, FK -> EVENTOS.id_evento)
+
+id_responsable (INT, FK -> COLABORADORES.id_colaborador)
+
+titulo (VARCHAR)
+
+descripcion (TEXT)
+
+prioridad (VARCHAR) (Ej: Alta, Media, Baja)
+
+estado_tarea (VARCHAR) (Ej: Pendiente, En Proceso, Completada)
+
+fecha_limite (DATETIME)
+
+fecha_completado (DATETIME, NULL)
+
+10. Tabla: PROVEEDORES
+id_proveedor (INT, PK)
+
+id_colaborador (INT, FK -> COLABORADORES.id_colaborador)
+
+nombre_empresa (VARCHAR)
+
+descripcion (TEXT)
+
+calificacion (FLOAT)
+
+11. Tabla: SERVICIOS
+id_servicio (INT, PK)
+
+id_proveedor (INT, FK -> PROVEEDORES.id_proveedor)
+
+nombre_servicio (VARCHAR)
+
+precio_pasado (DECIMAL)
+
+disponibilidad (VARCHAR / BOOLEAN)
+
+imagen_url (VARCHAR)
+
+modelo_3d_url (VARCHAR)
+
+descripcion_srv (TEXT)
+
+12. Tabla: CONTRATACIONES
+id_contratacion (INT, PK)
+
+id_evento (INT, FK -> EVENTOS.id_evento)
+
+id_servicio (INT, FK -> SERVICIOS.id_servicio)
+
+monto_total (DECIMAL)
+
+estado_contrato (VARCHAR)
+
+fecha_solicitud (DATETIME)
+
+13. Tabla: PAGOS
+id_pago (INT, PK)
+
+id_contratacion (INT, FK -> CONTRATACIONES.id_contratacion)
+
+monto_abonado (DECIMAL)
+
+estado_pago (VARCHAR) (Ej: Pendiente, Parcial, Total)
+
+fecha_pago (DATETIME)
+
+comprobante_url (VARCHAR)
+
+14. Tabla: INVITADOS_RSVP
+id_rsvp (INT, PK)
+
+id_evento (INT, FK -> EVENTOS.id_evento)
+
+nombre_invitado (VARCHAR)
+
+correo (VARCHAR)
+
+codigo_de_barra (VARCHAR) (Hash string usado para mapear el código QR)
+
+estado_invitado (VARCHAR) (Ej: Invitado, Confirmado, Rechazado, Ingresado)
+
+15. Tabla: RESTRICCIONES_INVITADO
+id_restriccion (INT, PK)
+
+id_rsvp (INT, FK -> INVITADOS_RSVP.id_rsvp)
+
+tipo (VARCHAR) (Ej: Alergia, Movilidad, Dieta)
+
+descripcion (TEXT)
+
+16. Tabla: AUDIT_LOG (Esencial para el requerimiento RNF-04 ebanistería ágil)
+id_log (INT, PK)
+
+id_usuario (INT, FK -> USUARIOS.id_usuario)
+
+accion (VARCHAR) (Ej: Creó, Editó, Eliminó)
+
+tabla_afectada (VARCHAR)
+
+valor_anterior (TEXT, NULL)
+
+valor_nuevo (TEXT, NULL)
+
+fecha_cambio (DATETIME)
