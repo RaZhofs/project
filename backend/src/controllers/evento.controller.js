@@ -5,10 +5,20 @@ const {
   InvitadoRsvp, RestriccionInvitado,
 } = require('../models');
 
+const CONFIRMADOS_SUBQUERY = `(
+  SELECT COUNT(*)
+  FROM INVITADOS_RSVP IR
+  WHERE IR.id_evento = EVENTOS.id_evento
+    AND IR.estado_invitado = N'Confirmado'
+)`;
+
 // GET /api/v1/eventos
 async function getAll(req, res, next) {
   try {
     const eventos = await Evento.findAll({
+      attributes: {
+        include: [[sequelize.literal(CONFIRMADOS_SUBQUERY), 'confirmados_count']],
+      },
       include: [
         { model: Administrador, attributes: ['id_administrador', 'nombre'] },
         { model: TipoEvento,    attributes: ['id_tipo', 'nombre'] },
@@ -24,6 +34,9 @@ async function getAll(req, res, next) {
 async function getById(req, res, next) {
   try {
     const evento = await Evento.findByPk(req.params.id, {
+      attributes: {
+        include: [[sequelize.literal(CONFIRMADOS_SUBQUERY), 'confirmados_count']],
+      },
       include: [
         { model: Administrador, attributes: ['id_administrador', 'nombre'] },
         { model: TipoEvento,    attributes: ['id_tipo', 'nombre'] },

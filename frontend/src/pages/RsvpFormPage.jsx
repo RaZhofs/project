@@ -96,7 +96,15 @@ export default function RsvpFormPage() {
 
   useEffect(() => {
     eventosApi.getById(id)
-      .then(({ data }) => setEvento(data.data))
+      .then(({ data }) => {
+        const ev          = data.data;
+        const confirmados = Number(ev.confirmados_count ?? 0);
+        const aforo       = Number(ev.aforo_maximo ?? 0);
+        if (aforo > 0 && confirmados >= aforo) {
+          setAgotado(true);
+        }
+        setEvento(ev);
+      })
       .catch(() => setEventoError('No se pudo cargar la información del evento.'))
       .finally(() => setLoadEvento(false));
   }, [id]);

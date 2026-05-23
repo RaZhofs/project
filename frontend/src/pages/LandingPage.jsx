@@ -92,7 +92,10 @@ function LandingNavbar() {
 
 // ── Tarjeta de evento público ──────────────────────────────────────────────
 function EventoPublicoCard({ ev, mostrarRsvp }) {
-  const icono = TIPO_ICON[ev.TIPOS_EVENTO?.nombre] ?? '📅';
+  const icono       = TIPO_ICON[ev.TIPOS_EVENTO?.nombre] ?? '📅';
+  const confirmados = Number(ev.confirmados_count ?? 0);
+  const aforo       = Number(ev.aforo_maximo ?? 0);
+  const aforoLleno  = aforo > 0 && confirmados >= aforo;
 
   return (
     <article className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md
@@ -142,13 +145,26 @@ function EventoPublicoCard({ ev, mostrarRsvp }) {
 
         {mostrarRsvp && (
           <div className="mt-auto">
-            <Link
-              to={`/eventos/publico/${ev.id_evento}/rsvp`}
-              className="block w-full text-center bg-indigo-600 hover:bg-indigo-700
-                         text-white text-sm font-semibold py-2.5 rounded-xl transition-colors"
-            >
-              Registrarse
-            </Link>
+            {aforoLleno ? (
+              <div className="w-full text-center bg-slate-200 dark:bg-zinc-700
+                             text-slate-500 dark:text-zinc-400
+                             text-sm font-semibold py-2.5 rounded-xl
+                             cursor-not-allowed select-none flex items-center justify-center gap-1.5">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                Aforo Completo
+              </div>
+            ) : (
+              <Link
+                to={`/eventos/publico/${ev.id_evento}/rsvp`}
+                className="block w-full text-center bg-indigo-600 hover:bg-indigo-700
+                           text-white text-sm font-semibold py-2.5 rounded-xl transition-colors"
+              >
+                Registrarse
+              </Link>
+            )}
           </div>
         )}
       </div>
