@@ -36,7 +36,7 @@ async function getTransporter() {
   return _transporter;
 }
 
-function plantillaCorreo({ nombre, nombreEvento, fechaEvento, ubicacion, idRsvp, qrDataUri }) {
+function plantillaCorreo({ nombre, nombreEvento, fechaEvento, ubicacion, idRsvp }) {
   const fecha = fechaEvento
     ? new Intl.DateTimeFormat('es-CL', { day: '2-digit', month: 'long', year: 'numeric' })
         .format(new Date(fechaEvento))
@@ -107,7 +107,7 @@ function plantillaCorreo({ nombre, nombreEvento, fechaEvento, ubicacion, idRsvp,
             <td style="padding:0 40px 32px;text-align:center;">
               <p style="margin:0 0 16px;font-size:13px;color:#64748b;">Presenta este código QR en la entrada del evento</p>
               <div style="display:inline-block;background:#ffffff;border:2px solid #e2e8f0;border-radius:16px;padding:16px;">
-                <img src="${qrDataUri}" alt="Código QR de acceso" width="200" height="200" style="display:block;border-radius:8px;" />
+                <img src="cid:codigo_qr_invitado" alt="Código QR de acceso" width="200" height="200" style="display:block;border-radius:8px;" />
               </div>
               <p style="margin:12px 0 0;font-size:11px;color:#94a3b8;">Guarda este correo o toma una captura de pantalla</p>
             </td>
@@ -131,11 +131,20 @@ function plantillaCorreo({ nombre, nombreEvento, fechaEvento, ubicacion, idRsvp,
 async function sendRsvpConfirmacion({ nombre, correo, nombreEvento, fechaEvento, ubicacion, idRsvp, qrDataUri }) {
   try {
     const transport = await getTransporter();
+    const qrBase64 = qrDataUri.replace(/^data:image\/png;base64,/, '');
+
     const info = await transport.sendMail({
       from:    process.env.SMTP_FROM || (process.env.EMAIL_USER ? `"Convexa" <${process.env.EMAIL_USER}>` : '"Convexa" <noreply@convexa.com>'),
       to:      correo,
       subject: `✅ Tu registro para ${nombreEvento} — Convexa`,
-      html:    plantillaCorreo({ nombre, nombreEvento, fechaEvento, ubicacion, idRsvp, qrDataUri }),
+      html:    plantillaCorreo({ nombre, nombreEvento, fechaEvento, ubicacion, idRsvp }),
+      attachments: [
+        {
+          filename: 'qr.png',
+          content:  Buffer.from(qrBase64, 'base64'),
+          cid:      'codigo_qr_invitado',
+        },
+      ],
     });
 
     const preview = nodemailer.getTestMessageUrl(info);
