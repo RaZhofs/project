@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { eventosApi, rsvpApi } from '../services/api';
 
 function fmtDate(iso) {
@@ -21,45 +21,6 @@ const FORM_INIT = {
   alergia:         '',
   movilidad:       false,
 };
-
-// ── Pantalla de procesando / éxito ───────────────────────────────────────────
-function PantallaExito({ idRsvp, nombreEvento }) {
-  return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col items-center justify-center px-4">
-      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-10 max-w-md w-full text-center">
-        <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-5">
-          <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-        </div>
-
-        <h2 className="text-xl font-bold text-slate-800 mb-1">Registro recibido</h2>
-        <p className="text-slate-500 text-sm mb-6">
-          Tu inscripción para <strong>{nombreEvento}</strong> fue registrada exitosamente.
-          Estamos procesando tu ticket de ingreso.
-        </p>
-
-        <div className="bg-slate-50 rounded-xl border border-slate-200 px-6 py-4 mb-6">
-          <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">N° de registro</p>
-          <p className="text-2xl font-bold text-indigo-600">#{String(idRsvp).padStart(6, '0')}</p>
-        </div>
-
-        <p className="text-xs text-slate-400 mb-6">
-          En breve recibirás tu código QR de acceso por correo electrónico.
-          Preséntalo en la entrada del evento.
-        </p>
-
-        <Link
-          to="/"
-          className="block w-full text-center bg-indigo-600 hover:bg-indigo-700
-                     text-white text-sm font-semibold py-2.5 rounded-xl transition-colors"
-        >
-          Volver al inicio
-        </Link>
-      </div>
-    </div>
-  );
-}
 
 // ── Pantalla de cupos agotados ───────────────────────────────────────────────
 function PantallaAgotado({ nombreEvento }) {
@@ -83,16 +44,17 @@ function PantallaAgotado({ nombreEvento }) {
 
 // ── Formulario RSVP ──────────────────────────────────────────────────────────
 export default function RsvpFormPage() {
-  const { id } = useParams();
+  const { id }   = useParams();
+  const navigate = useNavigate();
+
   const [evento,      setEvento]      = useState(null);
   const [loadEvento,  setLoadEvento]  = useState(true);
   const [eventoError, setEventoError] = useState('');
 
-  const [form,       setForm]       = useState(FORM_INIT);
-  const [saving,     setSaving]     = useState(false);
-  const [saveError,  setSaveError]  = useState('');
-  const [exitoId,    setExitoId]    = useState(null);
-  const [agotado,    setAgotado]    = useState(false);
+  const [form,      setForm]      = useState(FORM_INIT);
+  const [saving,    setSaving]    = useState(false);
+  const [saveError, setSaveError] = useState('');
+  const [agotado,   setAgotado]   = useState(false);
 
   useEffect(() => {
     eventosApi.getById(id)
@@ -109,9 +71,6 @@ export default function RsvpFormPage() {
       .finally(() => setLoadEvento(false));
   }, [id]);
 
-  if (exitoId) {
-    return <PantallaExito idRsvp={exitoId} nombreEvento={evento?.nombre_evento ?? ''} />;
-  }
   if (agotado) {
     return <PantallaAgotado nombreEvento={evento?.nombre_evento ?? ''} />;
   }
@@ -150,7 +109,15 @@ export default function RsvpFormPage() {
         codigo_acceso:   form.codigo_acceso.trim() || undefined,
         restricciones,
       });
-      setExitoId(data.data.id_rsvp);
+      navigate('/rsvp/confirmacion', {
+        replace: true,
+        state: {
+          idRsvp:         data.data.id_rsvp,
+          qrDataUri:      data.data.qr_data_uri,
+          nombreEvento:   evento?.nombre_evento ?? '',
+          nombreInvitado: form.nombre_invitado.trim(),
+        },
+      });
     } catch (err) {
       const msg = err.response?.data?.message ?? '';
       if (msg.toLowerCase().includes('cupos')) {

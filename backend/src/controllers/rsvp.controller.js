@@ -1,4 +1,6 @@
 const { Evento, InvitadoRsvp, RestriccionInvitado } = require('../models');
+const { generarQR }           = require('../services/qr.service');
+const { sendRsvpConfirmacion } = require('../services/email.service');
 
 async function registrarRsvp(req, res, next) {
   try {
@@ -13,7 +15,7 @@ async function registrarRsvp(req, res, next) {
     }
 
     const evento = await Evento.findByPk(id_evento, {
-      attributes: ['id_evento', 'aforo_maximo', 'codigo_acceso'],
+      attributes: ['id_evento', 'aforo_maximo', 'codigo_acceso', 'nombre_evento', 'fecha_inicio', 'ubicacion_texto'],
     });
     if (!evento) {
       return res.status(404).json({ ok: false, message: 'Evento no encontrado.' });
@@ -39,12 +41,15 @@ async function registrarRsvp(req, res, next) {
       }
     }
 
+    const token = crypto.randomUUID();
+
     const rsvp = await InvitadoRsvp.create({
       id_evento,
       nombre_invitado: nombre_invitado.trim(),
       correo: correo.trim(),
       telefono: telefono?.trim() || null,
       estado_invitado: estadoFinal,
+      codigo_de_barra: token,
     });
 
     if (Array.isArray(restricciones) && restricciones.length > 0) {
@@ -56,7 +61,26 @@ async function registrarRsvp(req, res, next) {
       }
     }
 
-    return res.status(201).json({ ok: true, data: { id_rsvp: rsvp.id_rsvp, estado_invitado: rsvp.estado_invitado } });
+    const qrDataUri = await generarQR(token);
+
+    sendRsvpConfirmacion({
+      nombre:       nombre_invitado.trim(),
+      correo:       correo.trim(),
+      nombreEvento: evento.nombre_evento,
+      fechaEvento:  evento.fecha_inicio,
+      ubicacion:    evento.ubicacion_texto,
+      idRsvp:       rsvp.id_rsvp,
+      qrDataUri,
+    });
+
+    return res.status(201).json({
+      ok: true,
+      data: {
+        id_rsvp:        rsvp.id_rsvp,
+        estado_invitado: rsvp.estado_invitado,
+        qr_data_uri:    qrDataUri,
+      },
+    });
   } catch (err) {
     next(err);
   }

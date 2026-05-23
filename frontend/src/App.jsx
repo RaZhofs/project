@@ -8,6 +8,7 @@ import EventoFormPage     from './pages/EventoFormPage';
 import MisTareasPage      from './pages/MisTareasPage';
 import EventoDetallePage  from './pages/EventoDetallePage';
 import RsvpFormPage       from './pages/RsvpFormPage';
+import RsvpSuccessPage    from './pages/RsvpSuccessPage';
 
 // Solo administradores; colaboradores van a /mis-tareas
 function AdminRoute({ children }) {
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="/"                               element={<LandingPage />} />
           <Route path="/login"                          element={<LoginPage />} />
           <Route path="/eventos/publico/:id/rsvp"       element={<RsvpFormPage />} />
+          <Route path="/rsvp/confirmacion"              element={<RsvpSuccessPage />} />
 
           {/* Rutas de administrador */}
           <Route path="/dashboard" element={
