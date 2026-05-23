@@ -1,14 +1,12 @@
-// Bloque de pulso genérico — úsalo para texto, imágenes o filas
 export function SkeletonBlock({ className = '' }) {
   return (
-    <div className={`animate-pulse bg-slate-200 rounded ${className}`} />
+    <div className={`animate-pulse bg-slate-200 dark:bg-slate-700 rounded ${className}`} />
   );
 }
 
-// Fila de tabla skeleton (7 celdas)
 export function SkeletonTableRow() {
   return (
-    <tr className="border-b border-slate-100">
+    <tr className="border-b border-slate-100 dark:border-slate-700">
       {[...Array(7)].map((_, i) => (
         <td key={i} className="px-4 py-3">
           <SkeletonBlock className="h-4 w-full" />
@@ -18,10 +16,9 @@ export function SkeletonTableRow() {
   );
 }
 
-// Tarjeta skeleton
 export function SkeletonCard() {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-5 flex flex-col gap-3">
+    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 flex flex-col gap-3">
       <SkeletonBlock className="h-5 w-3/4" />
       <SkeletonBlock className="h-4 w-1/2" />
       <div className="flex gap-2 mt-1">

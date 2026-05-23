@@ -3,6 +3,7 @@ const ctrl        = require('../controllers/evento.controller');
 const detallCtrl  = require('../controllers/eventoDetalle.controller');
 const bitacoraCtrl    = require('../controllers/bitacora.controller');
 const presupuestoCtrl = require('../controllers/presupuesto.controller');
+const rsvpCtrl        = require('../controllers/rsvp.controller');
 
 const router = Router();
 
@@ -31,5 +32,9 @@ router.get   ('/:id/presupuesto',          presupuestoCtrl.getItems);
 router.post  ('/:id/presupuesto',          presupuestoCtrl.crearItem);
 router.put   ('/:id/presupuesto/:id_item', presupuestoCtrl.updateItem);
 router.delete('/:id/presupuesto/:id_item', presupuestoCtrl.deleteItem);
+
+// Invitados RSVP del evento (vista admin)
+router.get   ('/:id/invitados',          rsvpCtrl.getInvitados);
+router.delete('/:id/invitados/:id_rsvp', rsvpCtrl.eliminarInvitado);
 
 module.exports = router;

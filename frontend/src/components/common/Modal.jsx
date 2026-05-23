@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import Button from './Button';
 
 export default function Modal({ isOpen, onClose, title, children, footer }) {
-  // Cierra con Escape
   useEffect(() => {
     if (!isOpen) return;
     const handler = (e) => { if (e.key === 'Escape') onClose(); };
@@ -10,7 +9,6 @@ export default function Modal({ isOpen, onClose, title, children, footer }) {
     return () => document.removeEventListener('keydown', handler);
   }, [isOpen, onClose]);
 
-  // Bloquea el scroll del body mientras está abierto
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
@@ -25,23 +23,20 @@ export default function Modal({ isOpen, onClose, title, children, footer }) {
       aria-modal="true"
       aria-labelledby="modal-title"
     >
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Panel */}
-      <div className="relative w-full max-w-lg bg-white rounded-xl shadow-xl flex flex-col max-h-[90vh]">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
-          <h2 id="modal-title" className="text-lg font-semibold text-slate-800">
+      <div className="relative w-full max-w-lg bg-white dark:bg-slate-800 rounded-xl shadow-xl flex flex-col max-h-[90vh]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+          <h2 id="modal-title" className="text-lg font-semibold text-slate-800 dark:text-slate-100">
             {title}
           </h2>
           <button
             onClick={onClose}
-            className="p-1 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+            className="p-1 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
             aria-label="Cerrar"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -50,14 +45,12 @@ export default function Modal({ isOpen, onClose, title, children, footer }) {
           </button>
         </div>
 
-        {/* Body */}
         <div className="px-6 py-4 overflow-y-auto flex-1">
           {children}
         </div>
 
-        {/* Footer */}
         {footer && (
-          <div className="flex justify-end gap-2 px-6 py-4 border-t border-slate-200 bg-slate-50 rounded-b-xl">
+          <div className="flex justify-end gap-2 px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 rounded-b-xl">
             {footer}
           </div>
         )}

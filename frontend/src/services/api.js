@@ -25,6 +25,9 @@ export const eventosApi = {
   // Tareas del evento
   getTareas:    (id)       => api.get(`/eventos/${id}/tareas`),
   crearTarea:   (id, data) => api.post(`/eventos/${id}/tareas`, data),
+  // Invitados RSVP (vista admin)
+  getInvitados:     (id)          => api.get(`/eventos/${id}/invitados`),
+  deleteInvitado:   (id, id_rsvp) => api.delete(`/eventos/${id}/invitados/${id_rsvp}`),
 };
 
 export const tiposEventoApi = {
@@ -59,4 +62,9 @@ export const presupuestoApi = {
   crearItem:  (id, data)        => api.post(`/eventos/${id}/presupuesto`, data),
   updateItem: (id, id_item, data) => api.put(`/eventos/${id}/presupuesto/${id_item}`, data),
   deleteItem: (id, id_item)     => api.delete(`/eventos/${id}/presupuesto/${id_item}`),
+};
+
+export const rsvpApi = {
+  registrar:    (id_evento, data) => api.post(`/publico/eventos/${id_evento}/rsvp`, data),
+  getInvitados: (id_evento)       => api.get(`/publico/eventos/${id_evento}/invitados`),
 };

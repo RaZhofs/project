@@ -1,8 +1,8 @@
 const variants = {
   primary:   'bg-indigo-600 text-white hover:bg-indigo-700 focus-visible:ring-indigo-500',
-  secondary: 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 focus-visible:ring-slate-400',
+  secondary: 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 focus-visible:ring-slate-400',
   danger:    'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500',
-  ghost:     'bg-transparent text-indigo-600 hover:bg-indigo-50 focus-visible:ring-indigo-400',
+  ghost:     'bg-transparent text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 focus-visible:ring-indigo-400',
 };
 
 const sizes = {

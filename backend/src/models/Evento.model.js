@@ -51,6 +51,10 @@ const Evento = sequelize.define('EVENTOS', {
     type: DataTypes.STRING(255),
     allowNull: true,
   },
+  codigo_acceso: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
+  },
   creado_by: {
     type: DataTypes.INTEGER,
     allowNull: false,

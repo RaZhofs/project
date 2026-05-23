@@ -391,10 +391,12 @@ ALTER ROLE db_owner ADD MEMBER conglomerado_user;</code></pre>
         <tr><td><code>009_patch_tareas_fk_responsable.sql</code></td><td>FK responsable en TAREAS</td></tr>
         <tr><td><code>010_create_bitacora.sql</code></td><td>Tabla BITACORA</td></tr>
         <tr><td><code>011_create_presupuesto.sql</code></td><td>Tabla PRESUPUESTO_ITEMS</td></tr>
+        <tr><td><code>012_create_invitados_rsvp.sql</code></td><td>Tabla INVITADOS_RSVP (registro de asistentes)</td></tr>
+        <tr><td><code>013_create_restricciones_invitado.sql</code></td><td>Tabla RESTRICCIONES_INVITADO</td></tr>
       </tbody>
     </table>
     <div class="callout warn">
-      <strong>⚠️ Importante:</strong> Ejecuta los scripts en orden estricto (001 → 011).
+      <strong>⚠️ Importante:</strong> Ejecuta los scripts en orden estricto (001 → 013).
       Cada tabla tiene dependencias de FK con las anteriores.
     </div>
   </li>

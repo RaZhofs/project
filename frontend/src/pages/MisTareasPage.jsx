@@ -26,9 +26,9 @@ function fmtDateTime(iso) {
 
 function StatChip({ label, count, color }) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 px-4 py-3 text-center shadow-sm">
+    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-center shadow-sm">
       <p className={`text-2xl font-bold ${color}`}>{count}</p>
-      <p className="text-xs text-slate-500 mt-0.5">{label}</p>
+      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{label}</p>
     </div>
   );
 }
@@ -67,7 +67,7 @@ function TabMisTareas({ sesion }) {
             className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
               filtro === f
                 ? 'bg-indigo-600 text-white'
-                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
             }`}>
             {f}
             {f !== 'Todas' && !loading && (
@@ -214,13 +214,13 @@ function TabBitacora({ sesion }) {
       {eventoSel && (
         <>
           {/* Cabecera del evento seleccionado */}
-          <div className="bg-indigo-50 border border-indigo-100 rounded-xl px-4 py-2 text-sm text-indigo-700 font-medium">
+          <div className="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 rounded-xl px-4 py-2 text-sm text-indigo-700 dark:text-indigo-300 font-medium">
             {eventoSel.nombre_evento}
           </div>
 
           {/* Formulario nueva entrada */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-            <p className="text-sm font-medium text-slate-700 mb-3">Nueva entrada</p>
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5">
+            <p className="text-sm font-medium text-slate-700 dark:text-slate-200 mb-3">Nueva entrada</p>
             <div className="flex flex-wrap gap-2 mb-3">
               {TIPOS_ENTRADA.map(t => (
                 <button key={t}
@@ -237,8 +237,8 @@ function TabBitacora({ sesion }) {
             <textarea
               rows={3}
               placeholder="Escribe una nota, avance o incidencia..."
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm
-                         text-slate-700 placeholder-slate-400 focus:outline-none
+              className="w-full rounded-xl border border-slate-200 dark:border-slate-600 px-3 py-2 text-sm
+                         text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-700 placeholder-slate-400 focus:outline-none
                          focus:ring-2 focus:ring-indigo-400 resize-none"
               value={form.contenido}
               onChange={e => setForm(p => ({ ...p, contenido: e.target.value }))}
@@ -264,16 +264,16 @@ function TabBitacora({ sesion }) {
             <div className="flex flex-col gap-3">
               {entradas.map(e => (
                 <div key={e.id_entrada}
-                  className="bg-white rounded-xl border border-slate-200 shadow-sm px-5 py-4">
+                  className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm px-5 py-4">
                   <div className="flex items-center gap-2 mb-2">
                     <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${TIPO_COLORS[e.tipo_entrada]}`}>
                       {e.tipo_entrada}
                     </span>
-                    <span className="text-xs text-slate-400">
+                    <span className="text-xs text-slate-400 dark:text-slate-500">
                       {e.autor_nombre} · {fmtDateTime(e.fecha_entrada)}
                     </span>
                   </div>
-                  <p className="text-sm text-slate-700 whitespace-pre-wrap">{e.contenido}</p>
+                  <p className="text-sm text-slate-700 dark:text-slate-200 whitespace-pre-wrap">{e.contenido}</p>
                 </div>
               ))}
             </div>
@@ -295,9 +295,9 @@ export default function MisTareasPage() {
   const handleLogout = () => { logout(); navigate('/login'); };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 flex flex-col">
 
-      <header className="bg-indigo-900 text-white shadow-md">
+      <header className="bg-indigo-900 dark:bg-slate-950 text-white shadow-md">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-indigo-400 rounded-lg flex items-center justify-center font-bold text-sm">
@@ -320,16 +320,16 @@ export default function MisTareasPage() {
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8">
 
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-slate-800">Hola, {sesion?.nombre}</h1>
-          <p className="text-sm text-slate-500 mt-1">Panel de colaborador</p>
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Hola, {sesion?.nombre}</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Panel de colaborador</p>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 bg-white border border-slate-200 rounded-xl p-1 shadow-sm mb-6 w-fit">
+        <div className="flex gap-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-1 shadow-sm mb-6 w-fit">
           {TABS_COLAB.map(t => (
             <button key={t} onClick={() => setTab(t)}
               className={`px-5 py-2 rounded-lg text-sm font-medium transition-colors ${
-                tab === t ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-slate-700'
+                tab === t ? 'bg-indigo-600 text-white' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
               }`}>
               {t}
             </button>

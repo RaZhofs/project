@@ -3,9 +3,11 @@ const eventoRoutes       = require('./evento.routes');
 const tipoEventoRoutes   = require('./tipoEvento.routes');
 const colaboradorRoutes  = require('./colaborador.routes');
 const tareaRoutes        = require('./tarea.routes');
+const publicoRoutes      = require('./publico.routes');
 
 const router = Router();
 
+router.use('/publico',       publicoRoutes);
 router.use('/eventos',       eventoRoutes);
 router.use('/tipos-evento',  tipoEventoRoutes);
 router.use('/colaboradores', colaboradorRoutes);

@@ -52,26 +52,26 @@ export default function EventoFormPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* ── Migas de pan ── */}
-        <nav className="flex items-center gap-2 text-sm text-slate-400 mb-6">
-          <Link to="/" className="hover:text-indigo-600 transition-colors">Eventos</Link>
+        <nav className="flex items-center gap-2 text-sm text-slate-400 dark:text-slate-500 mb-6">
+          <Link to="/" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Eventos</Link>
           <span>/</span>
-          <span className="text-slate-600 font-medium">
+          <span className="text-slate-600 dark:text-slate-300 font-medium">
             {isEditing ? 'Editar evento' : 'Nuevo evento'}
           </span>
         </nav>
 
         {/* ── Título ── */}
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-slate-800">
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
             {isEditing ? 'Editar evento' : 'Crear nuevo evento'}
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             {isEditing
               ? 'Modifica los datos del evento y guarda los cambios.'
               : 'Completa los campos para registrar un nuevo evento en Convexa.'}
@@ -108,8 +108,8 @@ export default function EventoFormPage() {
           <>
             {/* Error de API al guardar */}
             {apiError && (
-              <div className="mb-6 flex items-center gap-3 bg-red-50 border border-red-200
-                              text-red-700 rounded-xl px-4 py-3 text-sm">
+              <div className="mb-6 flex items-center gap-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700
+                              text-red-700 dark:text-red-400 rounded-xl px-4 py-3 text-sm">
                 <svg className="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd"
                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm-.75-11.25a.75.75 0 011.5 0v4.5a.75.75 0 01-1.5 0v-4.5zm.75 7.5a.75.75 0 100-1.5.75.75 0 000 1.5z"

@@ -10,6 +10,8 @@ const Evento              = require('./Evento.model');
 const Tarea               = require('./Tarea.model');
 const Bitacora            = require('./Bitacora.model');
 const PresupuestoItem     = require('./PresupuestoItem.model');
+const InvitadoRsvp        = require('./InvitadoRsvp.model');
+const RestriccionInvitado = require('./RestriccionInvitado.model');
 
 // ── ROLES → USUARIOS ──────────────────────────────────────────────────────
 Rol.hasMany(Usuario, { foreignKey: 'id_rol' });
@@ -63,6 +65,14 @@ Bitacora.belongsTo(Evento, { foreignKey: 'id_evento' });
 Evento.hasMany(PresupuestoItem, { foreignKey: 'id_evento' });
 PresupuestoItem.belongsTo(Evento, { foreignKey: 'id_evento' });
 
+// ── EVENTOS → INVITADOS_RSVP ──────────────────────────────────────────────
+Evento.hasMany(InvitadoRsvp, { foreignKey: 'id_evento' });
+InvitadoRsvp.belongsTo(Evento, { foreignKey: 'id_evento' });
+
+// ── INVITADOS_RSVP → RESTRICCIONES_INVITADO ───────────────────────────────
+InvitadoRsvp.hasMany(RestriccionInvitado, { foreignKey: 'id_rsvp', as: 'restricciones' });
+RestriccionInvitado.belongsTo(InvitadoRsvp, { foreignKey: 'id_rsvp' });
+
 module.exports = {
   sequelize,
   Rol,
@@ -75,4 +85,6 @@ module.exports = {
   Tarea,
   Bitacora,
   PresupuestoItem,
+  InvitadoRsvp,
+  RestriccionInvitado,
 };

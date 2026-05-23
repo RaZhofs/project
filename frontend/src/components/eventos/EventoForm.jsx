@@ -16,6 +16,7 @@ const INITIAL = {
   aforo_maximo:     '',
   estado_evento:    'Planificación',
   ubicacion_texto:  '',
+  codigo_acceso:    '',
 };
 
 function validate(form) {
@@ -54,6 +55,7 @@ export default function EventoForm({ initialData = null, onSubmit, loading }) {
         fecha_inicio:  toLocalInput(initialData.fecha_inicio),
         fecha_termino: toLocalInput(initialData.fecha_termino),
         id_tipo:       String(initialData.id_tipo ?? ''),
+        codigo_acceso: initialData.codigo_acceso ?? '',
       }
     : INITIAL
   );
@@ -88,8 +90,9 @@ export default function EventoForm({ initialData = null, onSubmit, loading }) {
     }
     onSubmit({
       ...form,
-      id_tipo:      Number(form.id_tipo),
-      aforo_maximo: Number(form.aforo_maximo),
+      id_tipo:       Number(form.id_tipo),
+      aforo_maximo:  Number(form.aforo_maximo),
+      codigo_acceso: form.codigo_acceso?.trim() || null,
     });
   };
 
@@ -97,8 +100,8 @@ export default function EventoForm({ initialData = null, onSubmit, loading }) {
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-6">
 
       {/* ── Información principal ── */}
-      <section className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4">
+      <section className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+        <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-4">
           Información del evento
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -137,8 +140,8 @@ export default function EventoForm({ initialData = null, onSubmit, loading }) {
       </section>
 
       {/* ── Fechas y capacidad ── */}
-      <section className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4">
+      <section className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+        <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-4">
           Fechas y capacidad
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -187,8 +190,8 @@ export default function EventoForm({ initialData = null, onSubmit, loading }) {
       </section>
 
       {/* ── Ubicación ── */}
-      <section className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4">
+      <section className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+        <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-4">
           Ubicación
         </h2>
         <Input
@@ -198,6 +201,25 @@ export default function EventoForm({ initialData = null, onSubmit, loading }) {
           placeholder="Ej. Auditorio Central, Edificio A, Piso 3"
           value={form.ubicacion_texto}
           onChange={handleChange}
+        />
+      </section>
+
+      {/* ── Acceso ── */}
+      <section className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-1">
+          Control de acceso
+        </h2>
+        <p className="text-xs text-slate-400 dark:text-slate-500 mb-4">
+          Si defines un código, el formulario de inscripción lo solicitará. Déjalo vacío para eventos públicos sin restricción.
+        </p>
+        <Input
+          id="codigo_acceso"
+          name="codigo_acceso"
+          label="Código de acceso"
+          placeholder="Ej. BODA2026 (opcional)"
+          value={form.codigo_acceso}
+          onChange={handleChange}
+          hint="Distingue mayúsculas y minúsculas."
         />
       </section>
 

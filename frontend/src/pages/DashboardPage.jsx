@@ -47,7 +47,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -55,22 +55,22 @@ export default function DashboardPage() {
         {/* ── Encabezado de sección ── */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">Eventos</h1>
-            <p className="text-sm text-slate-500 mt-0.5">
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Eventos</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
               {!loading && `${eventos.length} evento${eventos.length !== 1 ? 's' : ''} registrado${eventos.length !== 1 ? 's' : ''}`}
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             {/* Toggle tabla / cards */}
-            <div className="flex items-center bg-white border border-slate-200 rounded-lg p-0.5 shadow-sm">
+            <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-0.5 shadow-sm">
               <button
                 onClick={() => setVista('tabla')}
                 title="Vista tabla"
                 className={`p-2 rounded-md transition-colors ${
                   vista === 'tabla'
                     ? 'bg-indigo-600 text-white'
-                    : 'text-slate-400 hover:text-slate-600'
+                    : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
                 }`}
               >
                 <IconTable />
@@ -81,7 +81,7 @@ export default function DashboardPage() {
                 className={`p-2 rounded-md transition-colors ${
                   vista === 'cards'
                     ? 'bg-indigo-600 text-white'
-                    : 'text-slate-400 hover:text-slate-600'
+                    : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
                 }`}
               >
                 <IconGrid />
@@ -102,8 +102,8 @@ export default function DashboardPage() {
 
         {/* ── Banner de error ── */}
         {error && (
-          <div className="mb-6 flex items-center gap-3 bg-red-50 border border-red-200
-                          text-red-700 rounded-xl px-4 py-3 text-sm">
+          <div className="mb-6 flex items-center gap-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700
+                          text-red-700 dark:text-red-400 rounded-xl px-4 py-3 text-sm">
             <svg className="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd"
                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm-.75-11.25a.75.75 0 011.5 0v4.5a.75.75 0 01-1.5 0v-4.5zm.75 7.5a.75.75 0 100-1.5.75.75 0 000 1.5z"
@@ -151,9 +151,9 @@ export default function DashboardPage() {
           </>
         }
       >
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-slate-600 dark:text-slate-300">
           ¿Estás seguro de que deseas eliminar el evento{' '}
-          <span className="font-semibold text-slate-800">
+          <span className="font-semibold text-slate-800 dark:text-slate-100">
             "{toDelete?.nombre_evento}"
           </span>
           ? Esta acción no se puede deshacer.

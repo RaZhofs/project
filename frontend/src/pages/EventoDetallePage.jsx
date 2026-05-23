@@ -133,7 +133,7 @@ function TabEquipo({ id_evento }) {
         <div className="flex flex-col gap-2">
           {equipo.map(e => (
             <div key={e.id_colaborador}
-              className="flex items-center justify-between bg-white border border-slate-200 rounded-xl px-4 py-3">
+              className="flex items-center justify-between bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3">
               <div>
                 <p className="font-medium text-slate-800 text-sm">
                   {e.COLABORADORES?.nombre_completo ?? `Colaborador #${e.id_colaborador}`}
@@ -308,9 +308,9 @@ function TabTareas({ id_evento }) {
           <p className="text-sm mt-1">Crea la primera tarea para este evento.</p>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
-          <table className="w-full text-sm text-left text-slate-700">
-            <thead className="bg-slate-50 border-b border-slate-200 text-xs text-slate-500 uppercase tracking-wide">
+        <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
+          <table className="w-full text-sm text-left text-slate-700 dark:text-slate-300">
+            <thead className="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">
               <tr>
                 {['Tarea', 'Responsable', 'Prioridad', 'Estado', 'Fecha límite', ''].map(h => (
                   <th key={h} className="px-4 py-3 font-medium whitespace-nowrap">{h}</th>
@@ -319,7 +319,7 @@ function TabTareas({ id_evento }) {
             </thead>
             <tbody>
               {tareas.map(t => (
-                <tr key={t.id_tarea} className="border-b border-slate-100 hover:bg-slate-50">
+                <tr key={t.id_tarea} className="border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/40">
                   <td className="px-4 py-3 font-medium text-slate-800 max-w-[200px] truncate">
                     <p>{t.titulo}</p>
                     {t.descripcion && <p className="text-xs text-slate-400 truncate">{t.descripcion}</p>}
@@ -462,7 +462,7 @@ function TabBitacora({ id_evento }) {
     <div className="mt-4 flex flex-col gap-4">
 
       {/* Formulario nueva entrada */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5">
         <p className="text-sm font-medium text-slate-700 mb-3">Nueva entrada</p>
         <div className="flex gap-2 mb-3">
           {TIPOS_ENTRADA.map(t => (
@@ -482,8 +482,8 @@ function TabBitacora({ id_evento }) {
         <textarea
           rows={3}
           placeholder="Escribe una nota, avance o incidencia..."
-          className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700
-                     placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-400
+          className="w-full rounded-xl border border-slate-200 dark:border-slate-600 px-3 py-2 text-sm text-slate-700 dark:text-slate-200
+                     bg-white dark:bg-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-400
                      resize-none"
           value={form.contenido}
           onChange={e => setForm(p => ({ ...p, contenido: e.target.value }))}
@@ -510,7 +510,7 @@ function TabBitacora({ id_evento }) {
         <div className="flex flex-col gap-3">
           {entradas.map(e => (
             <div key={e.id_entrada}
-              className="bg-white rounded-xl border border-slate-200 shadow-sm px-5 py-4">
+              className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm px-5 py-4">
               <div className="flex items-center gap-2 mb-2">
                 <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${TIPO_COLORS[e.tipo_entrada]}`}>
                   {e.tipo_entrada}
@@ -637,7 +637,7 @@ function TabPresupuesto({ id_evento }) {
           { label: 'Balance',        value: fmtMoney(balance),   color: balance >= 0 ? 'text-green-600' : 'text-red-500' },
           { label: 'Total ejecutado',value: fmtMoney(ejecutado), color: 'text-indigo-600' },
         ].map(c => (
-          <div key={c.label} className="bg-white rounded-xl border border-slate-200 shadow-sm px-4 py-3 text-center">
+          <div key={c.label} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm px-4 py-3 text-center">
             <p className={`text-lg font-bold ${c.color}`}>{c.value}</p>
             <p className="text-xs text-slate-500 mt-0.5">{c.label}</p>
           </div>
@@ -656,9 +656,9 @@ function TabPresupuesto({ id_evento }) {
           <p className="text-sm mt-1">Agrega el primer ingreso o egreso.</p>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
-          <table className="w-full text-sm text-left text-slate-700">
-            <thead className="bg-slate-50 border-b border-slate-200 text-xs text-slate-500 uppercase tracking-wide">
+        <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
+          <table className="w-full text-sm text-left text-slate-700 dark:text-slate-300">
+            <thead className="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">
               <tr>
                 {['Descripción', 'Categoría', 'Tipo', 'Est.', 'Real', 'Estado', ''].map(h => (
                   <th key={h} className="px-4 py-3 font-medium whitespace-nowrap">{h}</th>
@@ -667,7 +667,7 @@ function TabPresupuesto({ id_evento }) {
             </thead>
             <tbody>
               {items.map(item => (
-                <tr key={item.id_item} className="border-b border-slate-100 hover:bg-slate-50">
+                <tr key={item.id_item} className="border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/40">
                   <td className="px-4 py-3 font-medium text-slate-800 max-w-[180px] truncate">{item.descripcion}</td>
                   <td className="px-4 py-3 text-slate-500 whitespace-nowrap">{item.categoria}</td>
                   <td className="px-4 py-3">
@@ -742,8 +742,171 @@ function TabPresupuesto({ id_evento }) {
   );
 }
 
+// ── Tab: Invitados ─────────────────────────────────────────────────────────
+const RESTRICCION_COLORS = {
+  Dieta:     'bg-amber-100 text-amber-700',
+  Alergia:   'bg-red-100   text-red-700',
+  Movilidad: 'bg-blue-100  text-blue-700',
+};
+
+const ESTADO_INVITADO_COLORS = {
+  Confirmado: 'bg-green-100 text-green-700',
+  Rechazado:  'bg-red-100   text-red-600',
+  Invitado:   'bg-slate-100 text-slate-600',
+  Ingresado:  'bg-indigo-100 text-indigo-700',
+};
+
+function TabInvitados({ id_evento, aforo_maximo }) {
+  const [invitados, setInvitados] = useState([]);
+  const [loading,   setLoading]   = useState(true);
+
+  const fetchInvitados = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data } = await eventosApi.getInvitados(id_evento);
+      setInvitados(data.data);
+    } catch (err) {
+      console.error('Error al cargar invitados:', err.response?.data?.message ?? err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [id_evento]);
+
+  const handleEliminarInvitado = async (id_rsvp, nombre) => {
+    if (!window.confirm(`¿Eliminar la reserva de "${nombre}"? Esta acción no se puede deshacer.`)) return;
+    try {
+      await eventosApi.deleteInvitado(id_evento, id_rsvp);
+      fetchInvitados();
+    } catch (err) {
+      console.error('Error al eliminar invitado:', err.response?.data?.message ?? err.message);
+    }
+  };
+
+  useEffect(() => { fetchInvitados(); }, [fetchInvitados]);
+
+  const confirmados = invitados.filter(i => i.estado_invitado === 'Confirmado').length;
+  const rechazados  = invitados.filter(i => i.estado_invitado === 'Rechazado').length;
+  const cuposLibres = aforo_maximo != null ? Math.max(0, aforo_maximo - confirmados) : null;
+
+  if (loading) return (
+    <div className="flex flex-col gap-3 mt-4">
+      {[...Array(4)].map((_, i) => <SkeletonBlock key={i} className="h-14 w-full rounded-xl" />)}
+    </div>
+  );
+
+  return (
+    <div className="mt-4 flex flex-col gap-4">
+
+      {/* KPIs */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          {
+            label: 'Cupos reservados',
+            value: aforo_maximo != null ? `${confirmados} / ${aforo_maximo}` : `${confirmados}`,
+            color: 'text-indigo-600',
+          },
+          { label: 'Cupos libres',  value: cuposLibres != null ? cuposLibres : '∞', color: cuposLibres === 0 ? 'text-red-500' : 'text-green-600' },
+          { label: 'Confirmados',   value: confirmados,  color: 'text-green-600' },
+          { label: 'Rechazados',    value: rechazados,   color: 'text-red-500'   },
+        ].map(c => (
+          <div key={c.label} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm px-4 py-3 text-center">
+            <p className={`text-2xl font-bold ${c.color}`}>{c.value}</p>
+            <p className="text-xs text-slate-500 mt-0.5">{c.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Tabla */}
+      <div className="flex justify-between items-center">
+        <p className="text-sm text-slate-500">{invitados.length} registro{invitados.length !== 1 ? 's' : ''}</p>
+        <button
+          onClick={fetchInvitados}
+          className="text-xs text-indigo-600 hover:underline"
+        >
+          Actualizar
+        </button>
+      </div>
+
+      {invitados.length === 0 ? (
+        <div className="text-center py-12 text-slate-400">
+          <p className="font-medium">Sin inscripciones aún.</p>
+          <p className="text-sm mt-1">Los registros del formulario público aparecerán aquí.</p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
+          <table className="w-full text-sm text-left text-slate-700 dark:text-slate-300">
+            <thead className="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+              <tr>
+                {['Nombre', 'Correo', 'Teléfono', 'Estado', 'Alertas', 'Registro', ''].map(h => (
+                  <th key={h} className="px-4 py-3 font-medium whitespace-nowrap">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {invitados.map(inv => (
+                <tr key={inv.id_rsvp} className="border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                  <td className="px-4 py-3 font-medium text-slate-800 whitespace-nowrap">
+                    {inv.nombre_invitado}
+                  </td>
+                  <td className="px-4 py-3 text-slate-500 max-w-[180px] truncate">
+                    {inv.correo}
+                  </td>
+                  <td className="px-4 py-3 text-slate-500 whitespace-nowrap">
+                    {inv.telefono ?? <span className="text-slate-300 italic">—</span>}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                      ESTADO_INVITADO_COLORS[inv.estado_invitado] ?? 'bg-slate-100 text-slate-600'
+                    }`}>
+                      {inv.estado_invitado}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    {inv.restricciones?.length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {inv.restricciones.map((r, i) => (
+                          <span
+                            key={i}
+                            title={r.descripcion ?? r.tipo}
+                            className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                              RESTRICCION_COLORS[r.tipo] ?? 'bg-slate-100 text-slate-600'
+                            }`}
+                          >
+                            {r.tipo}{r.descripcion ? `: ${r.descripcion}` : ''}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-slate-300 text-xs italic">Sin alertas</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-slate-400 whitespace-nowrap text-xs">
+                    {fmtDate(inv.fecha_registro)}
+                  </td>
+                  <td className="px-4 py-3">
+                    <button
+                      onClick={() => handleEliminarInvitado(inv.id_rsvp, inv.nombre_invitado)}
+                      title="Eliminar reserva"
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m-7 0a1 1 0 011-1h4a1 1 0 011 1m-6 0h6" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Página principal ───────────────────────────────────────────────────────
-const TABS = ['Equipo', 'Tareas', 'Bitácora', 'Presupuesto'];
+const TABS = ['Equipo', 'Tareas', 'Bitácora', 'Presupuesto', 'Invitados'];
 
 export default function EventoDetallePage() {
   const { id } = useParams();
@@ -758,15 +921,15 @@ export default function EventoDetallePage() {
   }, [id]);
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 flex flex-col">
       <Navbar />
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8">
 
         {/* Migas de pan */}
-        <nav className="flex items-center gap-2 text-sm text-slate-400 mb-6">
-          <Link to="/dashboard" className="hover:text-indigo-600 transition-colors">Eventos</Link>
+        <nav className="flex items-center gap-2 text-sm text-slate-400 dark:text-slate-500 mb-6">
+          <Link to="/dashboard" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Eventos</Link>
           <span>/</span>
-          <span className="text-slate-600 font-medium truncate max-w-[300px]">
+          <span className="text-slate-600 dark:text-slate-300 font-medium truncate max-w-[300px]">
             {loading ? '...' : evento?.nombre_evento}
           </span>
         </nav>
@@ -778,11 +941,11 @@ export default function EventoDetallePage() {
             <SkeletonBlock className="h-4 w-1/3" />
           </div>
         ) : evento && (
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-6">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 mb-6">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
               <div className="flex-1">
                 <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <h1 className="text-xl font-bold text-slate-800">{evento.nombre_evento}</h1>
+                  <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">{evento.nombre_evento}</h1>
                   <Badge label={evento.estado_evento} />
                   <Badge label={evento.modalidad_evento} />
                 </div>
@@ -802,11 +965,11 @@ export default function EventoDetallePage() {
         )}
 
         {/* Tabs */}
-        <div className="flex gap-1 bg-white border border-slate-200 rounded-xl p-1 shadow-sm mb-4 w-fit">
+        <div className="flex gap-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-1 shadow-sm mb-4 w-fit">
           {TABS.map(t => (
             <button key={t} onClick={() => setTab(t)}
               className={`px-5 py-2 rounded-lg text-sm font-medium transition-colors ${
-                tab === t ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-slate-700'
+                tab === t ? 'bg-indigo-600 text-white' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
               }`}
             >
               {t}
@@ -819,7 +982,8 @@ export default function EventoDetallePage() {
           tab === 'Equipo'      ? <TabEquipo      id_evento={id} /> :
           tab === 'Tareas'      ? <TabTareas      id_evento={id} /> :
           tab === 'Bitácora'    ? <TabBitacora    id_evento={id} /> :
-                                  <TabPresupuesto id_evento={id} />
+          tab === 'Presupuesto' ? <TabPresupuesto id_evento={id} /> :
+                                  <TabInvitados   id_evento={id} aforo_maximo={evento.aforo_maximo} />
         )}
       </main>
     </div>
