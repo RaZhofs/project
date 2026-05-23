@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Convexa — Manual de Usuario</title>
+  <style>
+    /* ── Reset & base ─────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 11pt;
+      line-height: 1.65;
+      color: #1e293b;
+      background: #fff;
+    }
+
+    /* ── Página / impresión ───────────────────── */
+    @page {
+      size: A4;
+      margin: 20mm 18mm 20mm 18mm;
+    }
+    @media print {
+      .no-print { display: none !important; }
+      section    { page-break-inside: avoid; }
+      h2         { page-break-before: always; }
+      h2.no-break{ page-break-before: avoid; }
+    }
+
+    /* ── Portada ──────────────────────────────── */
+    .cover {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      background: linear-gradient(135deg, #312e81 0%, #4f46e5 60%, #6366f1 100%);
+      color: #fff;
+      padding: 60px 40px;
+      page-break-after: always;
+    }
+    .cover .logo {
+      width: 72px; height: 72px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px; font-weight: 900;
+      margin-bottom: 28px;
+      letter-spacing: -1px;
+    }
+    .cover h1  { font-size: 40pt; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
+    .cover .sub{ font-size: 14pt; opacity: .75; margin-bottom: 40px; }
+    .cover .meta {
+      border-top: 1px solid rgba(255,255,255,.3);
+      padding-top: 24px;
+      font-size: 10pt;
+      opacity: .7;
+      line-height: 2;
+    }
+
+    /* ── TOC ──────────────────────────────────── */
+    .toc {
+      max-width: 680px; margin: 48px auto;
+      page-break-after: always;
+    }
+    .toc h2 { font-size: 18pt; color: #4f46e5; margin-bottom: 20px; }
+    .toc ol  { padding-left: 20px; }
+    .toc li  { margin-bottom: 6px; font-size: 11pt; color: #475569; }
+    .toc li strong { color: #1e293b; }
+
+    /* ── Secciones ────────────────────────────── */
+    .content { max-width: 680px; margin: 0 auto; padding: 32px 0; }
+
+    h2 {
+      font-size: 18pt;
+      font-weight: 700;
+      color: #4f46e5;
+      border-bottom: 3px solid #e0e7ff;
+      padding-bottom: 8px;
+      margin: 40px 0 18px;
+    }
+    h3 {
+      font-size: 13pt;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 22px 0 10px;
+    }
+    h4 {
+      font-size: 11pt;
+      font-weight: 600;
+      color: #475569;
+      margin: 16px 0 6px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    p  { margin-bottom: 10px; color: #334155; }
+    ul, ol { padding-left: 22px; margin-bottom: 12px; }
+    li { margin-bottom: 5px; color: #334155; }
+
+    /* ── Bloques de código ────────────────────── */
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 9.5pt;
+      font-family: 'Consolas', 'Courier New', monospace;
+      overflow-x: auto;
+      margin: 12px 0 18px;
+      line-height: 1.5;
+    }
+    code {
+      background: #e0e7ff;
+      color: #3730a3;
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 9.5pt;
+    }
+    pre code { background: none; color: inherit; padding: 0; }
+
+    /* ── Callouts ─────────────────────────────── */
+    .callout {
+      border-left: 4px solid;
+      border-radius: 0 10px 10px 0;
+      padding: 12px 16px;
+      margin: 14px 0;
+      font-size: 10.5pt;
+    }
+    .callout.info  { border-color: #6366f1; background: #eef2ff; color: #3730a3; }
+    .callout.warn  { border-color: #f59e0b; background: #fffbeb; color: #92400e; }
+    .callout.tip   { border-color: #10b981; background: #ecfdf5; color: #065f46; }
+    .callout.danger{ border-color: #ef4444; background: #fef2f2; color: #991b1b; }
+    .callout strong{ display: block; margin-bottom: 4px; }
+
+    /* ── Tablas ───────────────────────────────── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 20px;
+      font-size: 10.5pt;
+    }
+    th {
+      background: #f1f5f9;
+      color: #475569;
+      text-transform: uppercase;
+      font-size: 8.5pt;
+      letter-spacing: .5px;
+      padding: 9px 12px;
+      text-align: left;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    td { padding: 9px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
+
+    /* ── Badges ───────────────────────────────── */
+    .badge {
+      display: inline-block;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 8.5pt;
+      font-weight: 600;
+    }
+    .badge-admin { background: #e0e7ff; color: #3730a3; }
+    .badge-colab { background: #dcfce7; color: #166534; }
+    .badge-req   { background: #fef3c7; color: #92400e; }
+    .badge-opt   { background: #f1f5f9; color: #64748b; }
+
+    /* ── Tarjetas de credenciales ─────────────── */
+    .cred-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+    .cred-card {
+      border: 2px solid #e0e7ff;
+      border-radius: 12px;
+      padding: 16px 20px;
+    }
+    .cred-card.admin { border-color: #c7d2fe; background: #eef2ff; }
+    .cred-card.colab { border-color: #bbf7d0; background: #f0fdf4; }
+    .cred-card h4    { margin-top: 0; font-size: 10pt; }
+    .cred-card p     { margin: 4px 0; font-size: 10pt; }
+    .cred-card code  { font-size: 10pt; }
+
+    /* ── Pantallas / UI cards ─────────────────── */
+    .ui-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin: 12px 0;
+      background: #f8fafc;
+    }
+    .ui-card h4 { margin-top: 0; color: #4f46e5; }
+
+    /* ── Step list ────────────────────────────── */
+    .steps { counter-reset: step; list-style: none; padding-left: 0; }
+    .steps li {
+      counter-increment: step;
+      padding: 10px 0 10px 48px;
+      position: relative;
+      border-left: 2px solid #e0e7ff;
+      margin-left: 16px;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: -17px;
+      top: 10px;
+      width: 32px; height: 32px;
+      background: #4f46e5;
+      color: #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 11pt;
+    }
+    .steps li:last-child { border-left: 2px solid transparent; }
+
+    /* ── Botón imprimir ───────────────────────── */
+    .print-btn {
+      position: fixed; bottom: 28px; right: 28px;
+      background: #4f46e5; color: #fff;
+      border: none; border-radius: 12px;
+      padding: 12px 24px; font-size: 11pt; font-weight: 600;
+      cursor: pointer; box-shadow: 0 4px 20px rgba(79,70,229,.4);
+      z-index: 999;
+    }
+    .print-btn:hover { background: #4338ca; }
+
+    /* ── Separador ────────────────────────────── */
+    hr { border: none; border-top: 1px solid #e2e8f0; margin: 28px 0; }
+
+    /* ── Footer ───────────────────────────────── */
+    .footer {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 9pt;
+      padding: 32px 0 16px;
+      border-top: 1px solid #f1f5f9;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Botón imprimir -->
+<button class="print-btn no-print" onclick="window.print()">Guardar como PDF</button>
+
+<!-- ══════════════════════════════════════════
+     PORTADA
+══════════════════════════════════════════ -->
+<div class="cover">
+  <div class="logo">C</div>
+  <h1>Convexa</h1>
+  <p class="sub">Sistema de Gestión de Eventos</p>
+  <p class="sub" style="font-size:12pt; margin-top:-24px;">Manual de Instalación y Usuario</p>
+  <div class="meta">
+    Versión 2.0 &nbsp;·&nbsp; Fase 1 + Fase 2 completadas<br>
+    Tecnologías: Node.js · Express · SQL Server · React · Tailwind CSS<br>
+    Fecha de generación: Mayo 2026
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TABLA DE CONTENIDOS
+══════════════════════════════════════════ -->
+<div class="toc">
+  <h2>Tabla de Contenidos</h2>
+  <ol>
+    <li><strong>Introducción</strong> — ¿Qué es Convexa?</li>
+    <li><strong>Requisitos previos</strong> — Software necesario antes de instalar</li>
+    <li><strong>Guía de instalación</strong> — Clonar, configurar y levantar el sistema</li>
+    <li><strong>Credenciales de acceso</strong> — Usuarios de demostración</li>
+    <li><strong>Roles del sistema</strong> — Administrador vs Colaborador</li>
+    <li><strong>Vista Administrador</strong> — Dashboard, eventos, edición</li>
+    <li><strong>Detalle de evento</strong> — Las cuatro pestañas (Equipo, Tareas, Bitácora, Presupuesto)</li>
+    <li><strong>Vista Colaborador</strong> — Mis Tareas y Bitácora</li>
+    <li><strong>Flujo de trabajo recomendado</strong> — Paso a paso para un nuevo evento</li>
+    <li><strong>Solución de problemas comunes</strong></li>
+  </ol>
+</div>
+
+<!-- ══════════════════════════════════════════
+     CONTENIDO PRINCIPAL
+══════════════════════════════════════════ -->
+<div class="content">
+
+<!-- ─── 1. INTRODUCCIÓN ─────────────────────── -->
+<h2 class="no-break">1. Introducción</h2>
+<p>
+  <strong>Convexa</strong> es un sistema web de gestión de eventos diseñado para administrar equipos,
+  tareas, bitácoras y presupuestos desde una sola plataforma. Está construido con una arquitectura
+  de tres capas:
+</p>
+<ul>
+  <li><strong>Base de datos:</strong> SQL Server (cualquier edición, incluyendo Express gratuita)</li>
+  <li><strong>Backend:</strong> Node.js + Express + Sequelize (API REST)</li>
+  <li><strong>Frontend:</strong> React + Vite + Tailwind CSS v4</li>
+</ul>
+<p>
+  El sistema contempla dos roles: <span class="badge badge-admin">Administrador</span>, que gestiona
+  eventos completos, y <span class="badge badge-colab">Colaborador</span>, que visualiza y actualiza
+  sus tareas asignadas y puede participar en la bitácora de cada evento.
+</p>
+
+<!-- ─── 2. REQUISITOS ───────────────────────── -->
+<h2>2. Requisitos Previos</h2>
+<p>Antes de instalar Convexa, el equipo debe tener instalado:</p>
+
+<table>
+  <thead>
+    <tr><th>Software</th><th>Versión mínima</th><th>Notas</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Node.js</strong></td>
+      <td>18.x o superior</td>
+      <td>Incluye npm. Descargar en <code>nodejs.org</code></td>
+    </tr>
+    <tr>
+      <td><strong>SQL Server</strong></td>
+      <td>2016 o superior</td>
+      <td>La edición Express es gratuita y suficiente</td>
+    </tr>
+    <tr>
+      <td><strong>SSMS</strong></td>
+      <td>Cualquier versión reciente</td>
+      <td>SQL Server Management Studio — para ejecutar migraciones</td>
+    </tr>
+    <tr>
+      <td><strong>Git</strong></td>
+      <td>2.x</td>
+      <td>Para clonar el repositorio desde GitHub</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout info">
+  <strong>💡 ¿No tienes SQL Server?</strong>
+  Descarga SQL Server Express (gratuito) desde microsoft.com/sql-server/sql-server-downloads y
+  SSMS desde docs.microsoft.com/ssms/download-sql-server-management-studio-ssms.
+</div>
+
+<!-- ─── 3. INSTALACIÓN ──────────────────────── -->
+<h2>3. Guía de Instalación</h2>
+
+<h3>3.1 Clonar el repositorio</h3>
+<p>Abre una terminal (PowerShell o CMD) en la carpeta donde quieres instalar el proyecto:</p>
+<pre><code>git clone https://github.com/&lt;tu-usuario&gt;/convexa.git
+cd convexa</code></pre>
+
+<p>La estructura de carpetas que encontrarás es:</p>
+<pre><code>convexa/
+├── backend/          ← API Node.js + Express
+│   ├── migrations/   ← Scripts SQL a ejecutar en SSMS
+│   ├── seeders/      ← Datos iniciales de prueba
+│   └── src/
+├── frontend/         ← Aplicación React
+└── db/               ← Schema completo (referencia)</code></pre>
+
+<h3>3.2 Configurar SQL Server</h3>
+
+<ol class="steps">
+  <li>
+    <strong>Habilitar autenticación SQL</strong><br>
+    En SSMS, clic derecho sobre el servidor → Propiedades → Seguridad →
+    selecciona <em>"Modo de autenticación de SQL Server y Windows"</em>. Reinicia el servicio SQL Server.
+  </li>
+  <li>
+    <strong>Crear usuario SQL</strong><br>
+    En SSMS ejecuta:
+    <pre><code>CREATE LOGIN conglomerado_user WITH PASSWORD = 'ConglomPass2026!';
+CREATE DATABASE conglomerado_db;
+USE conglomerado_db;
+CREATE USER conglomerado_user FOR LOGIN conglomerado_user;
+ALTER ROLE db_owner ADD MEMBER conglomerado_user;</code></pre>
+  </li>
+  <li>
+    <strong>Ejecutar las migraciones</strong><br>
+    En SSMS, abre y ejecuta cada archivo de la carpeta <code>backend/migrations/</code>
+    en orden numérico:
+    <table>
+      <thead><tr><th>Archivo</th><th>Crea</th></tr></thead>
+      <tbody>
+        <tr><td><code>001_create_roles.sql</code></td><td>Tabla ROLES</td></tr>
+        <tr><td><code>002_create_usuarios.sql</code></td><td>Tabla USUARIOS</td></tr>
+        <tr><td><code>003_create_administradores.sql</code></td><td>Tabla ADMINISTRADORES</td></tr>
+        <tr><td><code>004_create_tipos_evento.sql</code></td><td>Tabla TIPOS_EVENTO</td></tr>
+        <tr><td><code>005_create_eventos.sql</code></td><td>Tabla EVENTOS</td></tr>
+        <tr><td><code>006_create_tareas.sql</code></td><td>Tabla TAREAS</td></tr>
+        <tr><td><code>007_create_colaboradores.sql</code></td><td>Tabla COLABORADORES</td></tr>
+        <tr><td><code>008_create_equipo_colaboradores.sql</code></td><td>Tabla EQUIPO_COLABORADORES</td></tr>
+        <tr><td><code>009_patch_tareas_fk_responsable.sql</code></td><td>FK responsable en TAREAS</td></tr>
+        <tr><td><code>010_create_bitacora.sql</code></td><td>Tabla BITACORA</td></tr>
+        <tr><td><code>011_create_presupuesto.sql</code></td><td>Tabla PRESUPUESTO_ITEMS</td></tr>
+      </tbody>
+    </table>
+    <div class="callout warn">
+      <strong>⚠️ Importante:</strong> Ejecuta los scripts en orden estricto (001 → 011).
+      Cada tabla tiene dependencias de FK con las anteriores.
+    </div>
+  </li>
+</ol>
+
+<h3>3.3 Instalar y configurar el Backend</h3>
+
+<ol class="steps">
+  <li>
+    <strong>Instalar dependencias</strong>
+    <pre><code>cd backend
+npm install</code></pre>
+  </li>
+  <li>
+    <strong>Crear el archivo de entorno</strong><br>
+    Crea el archivo <code>backend/.env</code> con el siguiente contenido
+    (ajusta los valores si tu instancia SQL Server es diferente):
+    <pre><code>DB_HOST=127.0.0.1
+DB_PORT=1433
+DB_NAME=conglomerado_db
+DB_USER=conglomerado_user
+DB_PASSWORD=ConglomPass2026!
+PORT=3001</code></pre>
+    <div class="callout tip">
+      <strong>✅ SQL Server Express con instancia nombrada:</strong>
+      Si usas una instancia con nombre (ej. <code>SQLEXPRESS</code>), agrega:<br>
+      <code>DB_INSTANCE=SQLEXPRESS</code><br>
+      y deja <code>DB_PORT</code> sin valor o comenta esa línea.
+    </div>
+  </li>
+  <li>
+    <strong>Poblar los datos iniciales</strong><br>
+    Este comando crea los roles, tipos de evento y los dos usuarios de demostración:
+    <pre><code>npm run seed</code></pre>
+    Deberías ver:
+    <pre><code>✓ Roles sembrados
+✓ Tipos de evento sembrados (8 tipos)
+✓ Admin demo creado.  → id_administrador: 1
+✓ Colaborador demo creado. → id_colaborador: 1</code></pre>
+  </li>
+  <li>
+    <strong>Iniciar el servidor</strong>
+    <pre><code>npm run dev</code></pre>
+    Resultado esperado: <code>Servidor corriendo en puerto 3001</code>
+  </li>
+</ol>
+
+<h3>3.4 Instalar y ejecutar el Frontend</h3>
+
+<ol class="steps">
+  <li>
+    <strong>Instalar dependencias</strong>
+    <pre><code>cd ../frontend
+npm install</code></pre>
+  </li>
+  <li>
+    <strong>Iniciar la aplicación</strong>
+    <pre><code>npm run dev</code></pre>
+    La aplicación quedará disponible en <code>http://localhost:5173</code>
+  </li>
+</ol>
+
+<div class="callout tip">
+  <strong>✅ Flujo de inicio rápido (resumen)</strong><br>
+  Terminal 1 → <code>cd backend &amp;&amp; npm run dev</code><br>
+  Terminal 2 → <code>cd frontend &amp;&amp; npm run dev</code><br>
+  Navegador → <code>http://localhost:5173</code>
+</div>
+
+<!-- ─── 4. CREDENCIALES ──────────────────────── -->
+<h2>4. Credenciales de Acceso</h2>
+<p>El sistema incluye dos usuarios de demostración listos para usar:</p>
+
+<div class="cred-grid">
+  <div class="cred-card admin">
+    <h4>ADMINISTRADOR</h4>
+    <p><strong>Correo:</strong> <code>admin@convexa.com</code></p>
+    <p><strong>Contraseña:</strong> <code>admin123</code></p>
+    <p style="margin-top:8px; font-size:9.5pt; color:#4338ca;">
+      Acceso completo a todos los eventos, equipos, tareas, bitácora y presupuesto.
+    </p>
+  </div>
+  <div class="cred-card colab">
+    <h4>COLABORADOR</h4>
+    <p><strong>Correo:</strong> <code>colab@convexa.com</code></p>
+    <p><strong>Contraseña:</strong> <code>colab123</code></p>
+    <p style="margin-top:8px; font-size:9.5pt; color:#166534;">
+      Ve sus tareas asignadas y la bitácora de los eventos donde participa.
+    </p>
+  </div>
+</div>
+
+<div class="callout danger">
+  <strong>🔒 Uso en producción:</strong> Estas credenciales son solo para pruebas locales.
+  En un entorno real deben cambiarse por credenciales seguras y se debe implementar
+  autenticación JWT real en el backend.
+</div>
+
+<!-- ─── 5. ROLES ─────────────────────────────── -->
+<h2>5. Roles del Sistema</h2>
+
+<table>
+  <thead>
+    <tr><th>Funcionalidad</th><th>Administrador</th><th>Colaborador</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Crear / editar / eliminar eventos</td><td>✅</td><td>❌</td></tr>
+    <tr><td>Ver lista de eventos</td><td>✅</td><td>❌</td></tr>
+    <tr><td>Asignar colaboradores a eventos</td><td>✅</td><td>❌</td></tr>
+    <tr><td>Crear / editar / eliminar tareas</td><td>✅</td><td>❌</td></tr>
+    <tr><td>Ver sus tareas asignadas</td><td>❌</td><td>✅</td></tr>
+    <tr><td>Cambiar estado de sus tareas</td><td>❌</td><td>✅</td></tr>
+    <tr><td>Publicar en bitácora</td><td>✅</td><td>✅</td></tr>
+    <tr><td>Ver bitácora del evento</td><td>✅</td><td>✅ (solo sus eventos)</td></tr>
+    <tr><td>Gestionar presupuesto</td><td>✅</td><td>❌</td></tr>
+  </tbody>
+</table>
+
+<!-- ─── 6. VISTA ADMINISTRADOR ─────────────── -->
+<h2>6. Vista Administrador</h2>
+
+<h3>6.1 Pantalla de Login</h3>
+<p>
+  Al ingresar a <code>http://localhost:5173</code>, el sistema muestra el formulario de acceso.
+  Ingresa el correo y contraseña del administrador y haz clic en <strong>Ingresar</strong>.
+  El sistema redirige automáticamente al <strong>Dashboard</strong> si el rol es Administrador,
+  o a <strong>Mis Tareas</strong> si es Colaborador.
+</p>
+
+<h3>6.2 Dashboard — Lista de Eventos</h3>
+<p>
+  El dashboard muestra todos los eventos registrados en el sistema. Dispone de dos modos de visualización
+  que se alternan con los botones de la barra superior derecha:
+</p>
+
+<div class="ui-card">
+  <h4>Vista Tarjetas (Cards)</h4>
+  <p>
+    Cada tarjeta representa un evento y contiene la siguiente información distribuida en secciones:
+  </p>
+  <ul>
+    <li>
+      <strong>Borde superior de color</strong> — indica el estado del evento:
+      <ul>
+        <li>🟡 Amarillo → Planificación</li>
+        <li>🔵 Azul → Montaje</li>
+        <li>🟢 Verde → Ejecución</li>
+        <li>⚪ Gris → Finalizado</li>
+        <li>🔴 Rojo → Cancelado</li>
+      </ul>
+    </li>
+    <li><strong>Nombre del evento</strong> — enlace clicable que lleva al detalle del evento</li>
+    <li><strong>Número ID</strong> — identificador interno (esquina superior derecha de la tarjeta)</li>
+    <li><strong>Badges de estado y modalidad</strong> — píldoras de color con el estado actual y la modalidad</li>
+    <li><strong>Cuadrícula de metadatos</strong> — Tipo de evento, Aforo máximo, Fecha de inicio, Fecha de término</li>
+    <li><strong>Ubicación</strong> — ícono de pin con la dirección (si fue ingresada)</li>
+    <li>
+      <strong>Pie de tarjeta</strong> — nombre del administrador responsable + botones
+      <em>Editar</em> y <em>Eliminar</em>
+    </li>
+  </ul>
+</div>
+
+<div class="ui-card">
+  <h4>Vista Tabla</h4>
+  <p>
+    Muestra todos los eventos en una tabla con columnas: Evento (enlace), Tipo, Administrador,
+    Inicio, Término, Aforo, Estado/Modalidad (badges) y Acciones (Editar / Eliminar).
+    Útil cuando hay muchos eventos y se necesita comparar datos rápidamente.
+  </p>
+</div>
+
+<h3>6.3 Crear un Nuevo Evento</h3>
+<p>
+  Haz clic en el botón <strong>"+ Nuevo evento"</strong> en el dashboard. El formulario solicita:
+</p>
+<table>
+  <thead><tr><th>Campo</th><th>Obligatorio</th><th>Descripción</th></tr></thead>
+  <tbody>
+    <tr><td>Nombre del evento</td><td><span class="badge badge-req">Requerido</span></td><td>Nombre descriptivo del evento</td></tr>
+    <tr><td>Tipo de evento</td><td><span class="badge badge-req">Requerido</span></td><td>Selecciona de la lista: Conferencia, Taller, Congreso, etc.</td></tr>
+    <tr><td>Fecha de inicio</td><td><span class="badge badge-req">Requerido</span></td><td>Fecha y hora de inicio</td></tr>
+    <tr><td>Fecha de término</td><td><span class="badge badge-req">Requerido</span></td><td>Debe ser posterior al inicio</td></tr>
+    <tr><td>Aforo máximo</td><td><span class="badge badge-req">Requerido</span></td><td>Número de asistentes permitidos</td></tr>
+    <tr><td>Estado</td><td><span class="badge badge-req">Requerido</span></td><td>Planificación / Montaje / Ejecución / Finalizado / Cancelado</td></tr>
+    <tr><td>Modalidad</td><td><span class="badge badge-req">Requerido</span></td><td>Desde cero / Recurrente / Itinerante</td></tr>
+    <tr><td>Ubicación</td><td><span class="badge badge-opt">Opcional</span></td><td>Dirección o lugar del evento</td></tr>
+  </tbody>
+</table>
+
+<!-- ─── 7. DETALLE DEL EVENTO ─────────────────── -->
+<h2>7. Detalle de Evento — Las Cuatro Pestañas</h2>
+<p>
+  Al hacer clic en el nombre de cualquier evento (desde tarjeta o tabla), accedes a la página
+  de detalle. En la parte superior se muestra un resumen con nombre, badges de estado y modalidad,
+  tipo, fechas, aforo y ubicación.
+  Debajo, una barra de navegación con cuatro pestañas:
+</p>
+
+<h3>Pestaña 1 — Equipo</h3>
+<div class="ui-card">
+  <h4>¿Qué muestra?</h4>
+  <p>
+    Lista de todos los colaboradores asignados a este evento. Cada fila muestra
+    nombre completo, correo, fecha de asignación y nivel de permiso (Lectura / Edición / Administración).
+  </p>
+  <h4>Acciones disponibles</h4>
+  <ul>
+    <li>
+      <strong>Asignar colaborador</strong> — botón en la esquina superior derecha.
+      Abre un modal con dos campos:
+      <ul>
+        <li><em>Colaborador</em>: lista de colaboradores aún no asignados al evento</li>
+        <li><em>Nivel de permiso</em>: Lectura, Edición o Administración</li>
+      </ul>
+    </li>
+    <li><strong>Quitar</strong> — botón rojo en cada fila para remover al colaborador del evento</li>
+  </ul>
+  <div class="callout info">
+    <strong>💡 Nota:</strong> El botón "Asignar colaborador" aparece deshabilitado si todos los
+    colaboradores del sistema ya están asignados al evento, o si no existe ningún colaborador en la BD.
+  </div>
+</div>
+
+<h3>Pestaña 2 — Tareas</h3>
+<div class="ui-card">
+  <h4>¿Qué muestra?</h4>
+  <p>
+    Tabla con todas las tareas creadas para este evento. Columnas: Tarea (título + descripción),
+    Responsable (colaborador asignado), Prioridad, Estado, Fecha límite y Acciones.
+  </p>
+  <h4>Acciones disponibles</h4>
+  <ul>
+    <li>
+      <strong>+ Nueva tarea</strong> — abre modal con los campos:
+      <ul>
+        <li>Título <span class="badge badge-req">Requerido</span></li>
+        <li>Descripción <span class="badge badge-opt">Opcional</span></li>
+        <li>Responsable (colaboradores asignados al evento)</li>
+        <li>Prioridad: Alta / Media / Baja</li>
+        <li>Fecha límite <span class="badge badge-req">Requerido</span></li>
+      </ul>
+    </li>
+    <li>
+      <strong>Editar</strong> — permite cambiar el responsable y el estado de la tarea
+      (Pendiente / En Proceso / Completada)
+    </li>
+    <li><strong>Eliminar</strong> — borra la tarea con confirmación previa</li>
+  </ul>
+  <div class="callout tip">
+    <strong>✅ Flujo correcto:</strong> Primero asigna colaboradores en la pestaña Equipo,
+    luego crea tareas asignándoles esos colaboradores como responsables.
+    Solo así aparecerán en el panel del colaborador.
+  </div>
+</div>
+
+<h3>Pestaña 3 — Bitácora</h3>
+<div class="ui-card">
+  <h4>¿Qué muestra?</h4>
+  <p>
+    Feed cronológico (más reciente primero) de todas las entradas registradas para el evento.
+    Cada entrada muestra: tipo (badge de color), nombre del autor, fecha y hora, y el contenido.
+  </p>
+  <h4>Tipos de entrada y colores</h4>
+  <ul>
+    <li>⚪ <strong>Nota</strong> — observación general (gris)</li>
+    <li>🟢 <strong>Avance</strong> — progreso reportado (verde)</li>
+    <li>🟡 <strong>Alerta</strong> — situación a atender (amarillo)</li>
+    <li>🔴 <strong>Incidencia</strong> — problema registrado (rojo)</li>
+  </ul>
+  <h4>Acciones disponibles</h4>
+  <ul>
+    <li>
+      Selecciona el tipo de entrada con los botones pill en la parte superior del formulario,
+      escribe el contenido en el área de texto y haz clic en <strong>Publicar</strong>.
+    </li>
+  </ul>
+  <div class="callout info">
+    <strong>💡 Compartido:</strong> Tanto el administrador como los colaboradores asignados
+    pueden publicar y leer las entradas de la bitácora del evento.
+  </div>
+</div>
+
+<h3>Pestaña 4 — Presupuesto</h3>
+<div class="ui-card">
+  <h4>¿Qué muestra?</h4>
+  <p>
+    Panel de control financiero del evento con:
+  </p>
+  <ul>
+    <li>
+      <strong>4 chips de resumen</strong> en la parte superior:
+      <ul>
+        <li>🟢 <em>Ingresos estimados</em> — suma de todos los ítems tipo Ingreso</li>
+        <li>🔴 <em>Egresos estimados</em> — suma de todos los ítems tipo Egreso</li>
+        <li>⚖️ <em>Balance</em> — Ingresos − Egresos (verde si positivo, rojo si negativo)</li>
+        <li>🔵 <em>Total ejecutado</em> — suma de los montos reales registrados</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Tabla de ítems</strong> con columnas: Descripción, Categoría, Tipo (Ingreso/Egreso),
+      Monto estimado, Monto real, Estado y Acciones.
+    </li>
+  </ul>
+  <h4>Acciones disponibles</h4>
+  <ul>
+    <li>
+      <strong>+ Nuevo ítem</strong> — modal con los campos:
+      <ul>
+        <li>Descripción <span class="badge badge-req">Requerido</span></li>
+        <li>Categoría: Infraestructura / Marketing / Personal / Catering / Tecnología / Logística / Otros</li>
+        <li>Tipo: Ingreso / Egreso</li>
+        <li>Monto estimado <span class="badge badge-req">Requerido</span></li>
+        <li>Monto real <span class="badge badge-opt">Opcional</span> — completar cuando se ejecute el gasto</li>
+        <li>Estado: Pendiente / Aprobado / Ejecutado</li>
+      </ul>
+    </li>
+    <li><strong>Editar</strong> — modificar cualquier campo del ítem</li>
+    <li><strong>Eliminar</strong> — borra el ítem con confirmación previa</li>
+  </ul>
+</div>
+
+<!-- ─── 8. VISTA COLABORADOR ────────────────── -->
+<h2>8. Vista Colaborador</h2>
+<p>
+  Al iniciar sesión con credenciales de colaborador, el sistema redirige a
+  <code>/mis-tareas</code>. Esta vista tiene su propia barra de navegación con dos pestañas:
+</p>
+
+<h3>Pestaña 1 — Mis Tareas</h3>
+<div class="ui-card">
+  <h4>¿Qué muestra?</h4>
+  <ul>
+    <li>
+      <strong>4 chips estadísticos</strong>: Total de tareas, Pendientes, En proceso y Completadas
+    </li>
+    <li>
+      <strong>Filtros de estado</strong>: botones pill para filtrar por Todas / Pendiente / En Proceso / Completada
+    </li>
+    <li>
+      <strong>Tarjetas de tarea</strong> — una por cada tarea asignada al colaborador. Cada tarjeta muestra:
+      <ul>
+        <li>Barra de color lateral según prioridad (🔴 Alta, 🟡 Media, 🟢 Baja)</li>
+        <li>Título y descripción de la tarea</li>
+        <li>Badge de estado actual (Pendiente / En Proceso / Completada)</li>
+        <li>Badge de prioridad</li>
+        <li>Nombre del evento al que pertenece la tarea</li>
+        <li>Fecha límite (en rojo si está vencida)</li>
+        <li>Botón <strong>"Siguiente estado"</strong> para avanzar el estado cíclicamente</li>
+      </ul>
+    </li>
+  </ul>
+  <div class="callout info">
+    <strong>💡 Nota:</strong> Solo aparecen aquí las tareas donde el colaborador fue
+    designado explícitamente como <em>Responsable</em> por el administrador.
+  </div>
+</div>
+
+<h3>Pestaña 2 — Bitácora</h3>
+<div class="ui-card">
+  <h4>¿Qué muestra?</h4>
+  <p>
+    Si el colaborador está asignado a un solo evento, muestra directamente la bitácora de ese evento.
+    Si está asignado a múltiples eventos, aparecen botones pill para seleccionar cuál evento ver.
+  </p>
+  <p>
+    El colaborador puede <strong>publicar entradas</strong> (Nota / Avance / Alerta / Incidencia)
+    y ver todas las entradas publicadas por el administrador y los demás colaboradores del mismo evento.
+  </p>
+</div>
+
+<!-- ─── 9. FLUJO RECOMENDADO ─────────────────── -->
+<h2>9. Flujo de Trabajo Recomendado</h2>
+<p>Para sacar el máximo provecho del sistema con un nuevo evento, sigue estos pasos:</p>
+
+<ol class="steps">
+  <li>
+    <strong>Crear el evento</strong><br>
+    Dashboard → <em>"+ Nuevo evento"</em> → completar formulario → <em>Guardar</em>.
+  </li>
+  <li>
+    <strong>Asignar el equipo</strong><br>
+    Clic en el nombre del evento → pestaña <em>Equipo</em> → <em>"Asignar colaborador"</em>
+    → seleccionar persona y nivel de permiso → <em>Asignar</em>. Repetir por cada integrante.
+  </li>
+  <li>
+    <strong>Crear las tareas</strong><br>
+    Pestaña <em>Tareas</em> → <em>"+ Nueva tarea"</em> → completar título, prioridad, fecha límite
+    y seleccionar un responsable del equipo ya asignado → <em>Crear tarea</em>.
+  </li>
+  <li>
+    <strong>El colaborador gestiona sus tareas</strong><br>
+    El colaborador ingresa con su cuenta → pestaña <em>Mis Tareas</em> →
+    usa el botón <em>"Siguiente estado"</em> para avanzar cada tarea (Pendiente → En Proceso → Completada).
+  </li>
+  <li>
+    <strong>Registrar avances en la bitácora</strong><br>
+    Tanto el administrador (pestaña <em>Bitácora</em> del evento) como el colaborador
+    (pestaña <em>Bitácora</em> en su panel) pueden publicar notas, avances, alertas e incidencias
+    que quedan registradas cronológicamente.
+  </li>
+  <li>
+    <strong>Gestionar el presupuesto</strong><br>
+    Pestaña <em>Presupuesto</em> → <em>"+ Nuevo ítem"</em> → registrar ingresos y egresos estimados.
+    A medida que se ejecutan los gastos, editar cada ítem para agregar el monto real y cambiar
+    su estado a <em>Ejecutado</em>.
+  </li>
+</ol>
+
+<!-- ─── 10. SOLUCIÓN DE PROBLEMAS ────────────── -->
+<h2>10. Solución de Problemas Comunes</h2>
+
+<table>
+  <thead><tr><th>Problema</th><th>Causa probable</th><th>Solución</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>El backend no conecta a la BD</td>
+      <td>Credenciales incorrectas en <code>.env</code> o autenticación SQL deshabilitada</td>
+      <td>Verificar <code>DB_USER</code> y <code>DB_PASSWORD</code>. Asegurarse de que el modo de autenticación mixto esté habilitado en SQL Server.</td>
+    </tr>
+    <tr>
+      <td>El dropdown de Tipo de evento aparece vacío</td>
+      <td>No se corrió el seeder de tipos de evento</td>
+      <td>Ejecutar <code>npm run seed</code> en la carpeta backend.</td>
+    </tr>
+    <tr>
+      <td>El botón "Asignar colaborador" está deshabilitado</td>
+      <td>No hay colaboradores en la BD o todos ya están asignados</td>
+      <td>Ejecutar <code>npm run seed</code> para crear el colaborador demo, o agregar colaboradores manualmente.</td>
+    </tr>
+    <tr>
+      <td>Las tareas no aparecen en "Mis Tareas"</td>
+      <td>Las tareas no tienen responsable asignado (<code>id_responsable</code> es NULL)</td>
+      <td>En la pestaña Tareas del admin, usar el botón <em>Editar</em> de cada tarea y asignar un responsable.</td>
+    </tr>
+    <tr>
+      <td>Error "Invalid object name 'BITACORA'"</td>
+      <td>La migración 010 no fue ejecutada en SSMS</td>
+      <td>Abrir <code>backend/migrations/010_create_bitacora.sql</code> en SSMS y ejecutar.</td>
+    </tr>
+    <tr>
+      <td>Error "Invalid object name 'PRESUPUESTO_ITEMS'"</td>
+      <td>La migración 011 no fue ejecutada en SSMS</td>
+      <td>Abrir <code>backend/migrations/011_create_presupuesto.sql</code> en SSMS y ejecutar.</td>
+    </tr>
+    <tr>
+      <td>El frontend no carga / error CORS</td>
+      <td>El backend no está corriendo</td>
+      <td>Verificar que <code>npm run dev</code> esté activo en la carpeta backend y que responda en <code>localhost:3001</code>.</td>
+    </tr>
+    <tr>
+      <td>Instancia SQL con nombre (SQLExpress) no conecta</td>
+      <td>Falta la variable <code>DB_INSTANCE</code> en <code>.env</code></td>
+      <td>Agregar <code>DB_INSTANCE=SQLEXPRESS</code> (o el nombre de tu instancia) al archivo <code>.env</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<div class="footer">
+  <p><strong>Convexa</strong> — Sistema de Gestión de Eventos · Versión 2.0</p>
+  <p>Desarrollado como proyecto universitario · Fase 1 y Fase 2 completadas</p>
+  <p>Para reportar problemas o sugerencias, contacta al administrador del repositorio.</p>
+</div>
+
+</div><!-- /content -->
+
+<script>
+  // Atajos de teclado
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+      e.preventDefault();
+      window.print();
+    }
+  });
+</script>
+
+</body>
+</html>

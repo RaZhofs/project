@@ -56,7 +56,7 @@ export default function LoginPage() {
 
       if (match && match.password === form.password) {
         login(match.sesion, `demo-token-${match.sesion.rol}`);
-        navigate(match.sesion.rol === 'Administrador' ? '/' : '/mis-tareas');
+        navigate(match.sesion.rol === 'Administrador' ? '/dashboard' : '/mis-tareas');
       } else {
         setApiError('Correo o contraseña incorrectos.');
       }

@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import Button from './Button';
 
 export default function Navbar() {
-  const { admin, logout } = useAuth();
+  const { sesion, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -30,16 +30,16 @@ export default function Navbar() {
 
           {/* Nav links */}
           <nav className="hidden md:flex items-center gap-6 text-sm text-indigo-200">
-            <Link to="/" className="hover:text-white transition-colors">
+            <Link to="/dashboard" className="hover:text-white transition-colors">
               Eventos
             </Link>
           </nav>
 
           {/* User area */}
           <div className="flex items-center gap-3">
-            {admin && (
+            {sesion && (
               <span className="hidden sm:block text-sm text-indigo-200">
-                {admin.nombre}
+                {sesion.nombre}
               </span>
             )}
             <Button variant="ghost" size="sm" onClick={handleLogout}

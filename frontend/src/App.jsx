@@ -1,30 +1,25 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import LoginPage      from './pages/LoginPage';
-import DashboardPage  from './pages/DashboardPage';
-import EventoFormPage from './pages/EventoFormPage';
+import LandingPage        from './pages/LandingPage';
+import LoginPage          from './pages/LoginPage';
+import DashboardPage      from './pages/DashboardPage';
+import EventoFormPage     from './pages/EventoFormPage';
 import MisTareasPage      from './pages/MisTareasPage';
 import EventoDetallePage  from './pages/EventoDetallePage';
-
-// Redirige a /login si no hay sesión activa
-function PrivateRoute({ children }) {
-  const { isAuth } = useAuth();
-  return isAuth ? children : <Navigate to="/login" replace />;
-}
 
 // Solo administradores; colaboradores van a /mis-tareas
 function AdminRoute({ children }) {
   const { isAuth, isAdmin } = useAuth();
-  if (!isAuth)   return <Navigate to="/login"      replace />;
-  if (!isAdmin)  return <Navigate to="/mis-tareas" replace />;
+  if (!isAuth)  return <Navigate to="/login"      replace />;
+  if (!isAdmin) return <Navigate to="/mis-tareas" replace />;
   return children;
 }
 
 // Solo colaboradores; administradores van al dashboard
 function ColabRoute({ children }) {
   const { isAuth, isColaborador } = useAuth();
-  if (!isAuth)        return <Navigate to="/login" replace />;
-  if (!isColaborador) return <Navigate to="/"      replace />;
+  if (!isAuth)        return <Navigate to="/login"     replace />;
+  if (!isColaborador) return <Navigate to="/dashboard" replace />;
   return children;
 }
 
@@ -33,10 +28,12 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          {/* Pública */}
+          <Route path="/"      element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
 
           {/* Rutas de administrador */}
-          <Route path="/" element={
+          <Route path="/dashboard" element={
             <AdminRoute><DashboardPage /></AdminRoute>
           } />
           <Route path="/eventos/nuevo" element={

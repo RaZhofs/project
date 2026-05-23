@@ -764,7 +764,7 @@ export default function EventoDetallePage() {
 
         {/* Migas de pan */}
         <nav className="flex items-center gap-2 text-sm text-slate-400 mb-6">
-          <Link to="/" className="hover:text-indigo-600 transition-colors">Eventos</Link>
+          <Link to="/dashboard" className="hover:text-indigo-600 transition-colors">Eventos</Link>
           <span>/</span>
           <span className="text-slate-600 font-medium truncate max-w-[300px]">
             {loading ? '...' : evento?.nombre_evento}
