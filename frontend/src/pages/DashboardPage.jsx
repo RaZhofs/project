@@ -6,7 +6,7 @@ import Modal        from '../components/common/Modal';
 import EventoTable  from '../components/eventos/EventoTable';
 import EventoCard   from '../components/eventos/EventoCard';
 import { useEventos } from '../hooks/useEventos';
-import { eventosApi } from '../services/api';
+import { eventosApi, reportesApi } from '../services/api';
 
 // Íconos para el toggle de vista
 function IconTable() {
@@ -29,8 +29,21 @@ function IconGrid() {
 export default function DashboardPage() {
   const { eventos, loading, error, refetch } = useEventos();
   const [vista,    setVista]    = useState('tabla');   // 'tabla' | 'cards'
-  const [toDelete, setToDelete] = useState(null);      // evento pendiente de borrado
-  const [deleting, setDeleting] = useState(false);
+  const [toDelete,    setToDelete]    = useState(null);
+  const [deleting,    setDeleting]    = useState(false);
+  const [exporting,   setExporting]   = useState(null);  // 'excel' | 'pdf' | null
+
+  const handleExport = async (tipo) => {
+    setExporting(tipo);
+    try {
+      if (tipo === 'excel') await reportesApi.descargarExcel();
+      else                  await reportesApi.descargarPdf();
+    } catch {
+      alert('No se pudo generar el reporte. Intenta nuevamente.');
+    } finally {
+      setExporting(null);
+    }
+  };
 
   const handleDeleteConfirm = async () => {
     if (!toDelete) return;
@@ -113,6 +126,59 @@ export default function DashboardPage() {
               </Button>
             </Link>
           </div>
+        </div>
+
+        {/* ── Barra de exportación ejecutiva ── */}
+        <div className="flex flex-wrap items-center gap-3 mb-6 p-4
+                        bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Informes ejecutivos</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+              Reporte consolidado de asistencia y presupuesto por evento
+            </p>
+          </div>
+          {/* Excel */}
+          <button
+            onClick={() => handleExport('excel')}
+            disabled={exporting !== null}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
+                       bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60
+                       text-white transition-colors shadow-sm"
+          >
+            {exporting === 'excel' ? (
+              <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+              </svg>
+            ) : (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0120 9.414V19a2 2 0 01-2 2z" />
+              </svg>
+            )}
+            {exporting === 'excel' ? 'Generando…' : 'Exportar Excel (.xlsx)'}
+          </button>
+          {/* PDF */}
+          <button
+            onClick={() => handleExport('pdf')}
+            disabled={exporting !== null}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
+                       bg-rose-600 hover:bg-rose-700 disabled:opacity-60
+                       text-white transition-colors shadow-sm"
+          >
+            {exporting === 'pdf' ? (
+              <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+              </svg>
+            ) : (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            )}
+            {exporting === 'pdf' ? 'Generando…' : 'Descargar PDF (.pdf)'}
+          </button>
         </div>
 
         {/* ── Banner de error ── */}

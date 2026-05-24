@@ -757,8 +757,15 @@ const ESTADO_INVITADO_COLORS = {
 };
 
 function TabInvitados({ id_evento, aforo_maximo }) {
-  const [invitados, setInvitados] = useState([]);
-  const [loading,   setLoading]   = useState(true);
+  const [invitados,  setInvitados]  = useState([]);
+  const [loading,    setLoading]    = useState(true);
+  const [sendingId,  setSendingId]  = useState(null); // id_rsvp en curso
+  const [toast,      setToast]      = useState(null);  // { msg, ok }
+
+  const showToast = (msg, ok = true) => {
+    setToast({ msg, ok });
+    setTimeout(() => setToast(null), 3500);
+  };
 
   const fetchInvitados = useCallback(async () => {
     setLoading(true);
@@ -782,6 +789,19 @@ function TabInvitados({ id_evento, aforo_maximo }) {
     }
   };
 
+  const handleEnviarTicket = async (id_rsvp, correo) => {
+    if (sendingId !== null) return;
+    setSendingId(id_rsvp);
+    try {
+      await eventosApi.enviarTicket(id_evento, id_rsvp);
+      showToast(`Ticket enviado correctamente a ${correo}`);
+    } catch (err) {
+      showToast(err.response?.data?.message ?? 'Error al enviar el ticket.', false);
+    } finally {
+      setSendingId(null);
+    }
+  };
+
   useEffect(() => { fetchInvitados(); }, [fetchInvitados]);
 
   const confirmados = invitados.filter(i => i.estado_invitado === 'Confirmado').length;
@@ -796,6 +816,27 @@ function TabInvitados({ id_evento, aforo_maximo }) {
 
   return (
     <div className="mt-4 flex flex-col gap-4">
+
+      {/* Toast */}
+      {toast && (
+        <div className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium shadow-sm border
+          ${toast.ok
+            ? 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-900/30 dark:border-emerald-700 dark:text-emerald-300'
+            : 'bg-red-50 border-red-200 text-red-700 dark:bg-red-900/30 dark:border-red-700 dark:text-red-300'
+          }`}
+        >
+          {toast.ok ? (
+            <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          ) : (
+            <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          )}
+          {toast.msg}
+        </div>
+      )}
 
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -837,7 +878,7 @@ function TabInvitados({ id_evento, aforo_maximo }) {
           <table className="w-full text-sm text-left text-slate-700 dark:text-slate-300">
             <thead className="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">
               <tr>
-                {['Nombre', 'Correo', 'Teléfono', 'Estado', 'Alertas', 'Registro', ''].map(h => (
+                {['Nombre', 'Correo', 'Teléfono', 'Estado', 'Alertas', 'Registro', 'Acciones'].map(h => (
                   <th key={h} className="px-4 py-3 font-medium whitespace-nowrap">{h}</th>
                 ))}
               </tr>
@@ -884,16 +925,41 @@ function TabInvitados({ id_evento, aforo_maximo }) {
                     {fmtDate(inv.fecha_registro)}
                   </td>
                   <td className="px-4 py-3">
-                    <button
-                      onClick={() => handleEliminarInvitado(inv.id_rsvp, inv.nombre_invitado)}
-                      title="Eliminar reserva"
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m-7 0a1 1 0 011-1h4a1 1 0 011 1m-6 0h6" />
-                      </svg>
-                    </button>
+                    <div className="flex items-center gap-1">
+                      {/* Enviar ticket */}
+                      <button
+                        onClick={() => handleEnviarTicket(inv.id_rsvp, inv.correo)}
+                        disabled={sendingId !== null}
+                        title={`Enviar ticket QR a ${inv.correo}`}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50
+                                   dark:hover:text-indigo-400 dark:hover:bg-indigo-900/30
+                                   disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                      >
+                        {sendingId === inv.id_rsvp ? (
+                          <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                          </svg>
+                        ) : (
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                        )}
+                      </button>
+                      {/* Eliminar */}
+                      <button
+                        onClick={() => handleEliminarInvitado(inv.id_rsvp, inv.nombre_invitado)}
+                        title="Eliminar reserva"
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50
+                                   dark:hover:text-red-400 dark:hover:bg-red-900/30 transition-colors"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m-7 0a1 1 0 011-1h4a1 1 0 011 1m-6 0h6" />
+                        </svg>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

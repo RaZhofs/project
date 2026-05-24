@@ -34,7 +34,8 @@ router.put   ('/:id/presupuesto/:id_item', presupuestoCtrl.updateItem);
 router.delete('/:id/presupuesto/:id_item', presupuestoCtrl.deleteItem);
 
 // Invitados RSVP del evento (vista admin)
-router.get   ('/:id/invitados',          rsvpCtrl.getInvitados);
-router.delete('/:id/invitados/:id_rsvp', rsvpCtrl.eliminarInvitado);
+router.get   ('/:id/invitados',                       rsvpCtrl.getInvitados);
+router.delete('/:id/invitados/:id_rsvp',              rsvpCtrl.eliminarInvitado);
+router.post  ('/:id/invitados/:id_rsvp/enviar-ticket', rsvpCtrl.enviarTicket);
 
 module.exports = router;

@@ -169,4 +169,42 @@ async function validarAcceso(req, res, next) {
   }
 }
 
-module.exports = { registrarRsvp, getInvitados, eliminarInvitado, validarAcceso };
+async function enviarTicket(req, res, next) {
+  try {
+    const id_evento = parseInt(req.params.id,      10);
+    const id_rsvp   = parseInt(req.params.id_rsvp, 10);
+
+    const rsvp = await InvitadoRsvp.findOne({
+      where: { id_rsvp, id_evento },
+      include: [{ model: Evento, attributes: ['nombre_evento', 'fecha_inicio', 'ubicacion_texto'] }],
+    });
+    if (!rsvp) {
+      return res.status(404).json({ ok: false, message: 'Invitado no encontrado.' });
+    }
+
+    // Genera token si el invitado no tiene código (registros pre-feature)
+    let token = rsvp.codigo_de_barra;
+    if (!token) {
+      token = crypto.randomUUID();
+      await rsvp.update({ codigo_de_barra: token });
+    }
+
+    const qrDataUri = await generarQR(token);
+
+    sendRsvpConfirmacion({
+      nombre:       rsvp.nombre_invitado,
+      correo:       rsvp.correo,
+      nombreEvento: rsvp.EVENTO?.nombre_evento ?? '',
+      fechaEvento:  rsvp.EVENTO?.fecha_inicio  ?? null,
+      ubicacion:    rsvp.EVENTO?.ubicacion_texto ?? null,
+      idRsvp:       rsvp.id_rsvp,
+      qrDataUri,
+    });
+
+    return res.json({ ok: true, message: 'Ticket enviado correctamente.' });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { registrarRsvp, getInvitados, eliminarInvitado, validarAcceso, enviarTicket };

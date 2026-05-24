@@ -28,6 +28,7 @@ export const eventosApi = {
   // Invitados RSVP (vista admin)
   getInvitados:     (id)          => api.get(`/eventos/${id}/invitados`),
   deleteInvitado:   (id, id_rsvp) => api.delete(`/eventos/${id}/invitados/${id_rsvp}`),
+  enviarTicket:     (id, id_rsvp) => api.post(`/eventos/${id}/invitados/${id_rsvp}/enviar-ticket`),
 };
 
 export const tiposEventoApi = {
@@ -68,4 +69,26 @@ export const rsvpApi = {
   registrar:     (id_evento, data) => api.post(`/publico/eventos/${id_evento}/rsvp`, data),
   getInvitados:  (id_evento)       => api.get(`/publico/eventos/${id_evento}/invitados`),
   validarAcceso: (token)           => api.post('/rsvp/validar-acceso', { token }),
+};
+
+function triggerDownload(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a   = document.createElement('a');
+  a.href     = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+export const reportesApi = {
+  async descargarExcel() {
+    const { data } = await api.get('/reportes/excel/consolidado', { responseType: 'blob' });
+    triggerDownload(data, `Reporte_Convexa_${Date.now()}.xlsx`);
+  },
+  async descargarPdf() {
+    const { data } = await api.get('/reportes/pdf/consolidado', { responseType: 'blob' });
+    triggerDownload(data, `Reporte_Convexa_${Date.now()}.pdf`);
+  },
 };
