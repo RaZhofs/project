@@ -1,4 +1,5 @@
 const { Evento, InvitadoRsvp, RestriccionInvitado } = require('../models');
+const sequelize               = require('../config/database');
 const { generarQR }           = require('../services/qr.service');
 const { sendRsvpConfirmacion } = require('../services/email.service');
 
@@ -119,4 +120,53 @@ async function eliminarInvitado(req, res, next) {
   }
 }
 
-module.exports = { registrarRsvp, getInvitados, eliminarInvitado };
+async function validarAcceso(req, res, next) {
+  try {
+    const { token } = req.body;
+    if (!token?.trim()) {
+      return res.status(400).json({ ok: false, message: 'Token QR requerido.' });
+    }
+
+    const rsvp = await InvitadoRsvp.findOne({
+      where: { codigo_de_barra: token.trim() },
+      include: [{ model: Evento, attributes: ['nombre_evento'] }],
+    });
+
+    if (!rsvp) {
+      return res.status(404).json({ ok: false, message: 'QR inválido o no registrado en el sistema.' });
+    }
+
+    if (rsvp.estado_invitado === 'Ingresado') {
+      return res.status(409).json({
+        ok: false,
+        message: 'Este invitado ya registró su ingreso.',
+        fecha_ingreso: rsvp.fecha_ingreso,
+      });
+    }
+
+    if (rsvp.estado_invitado === 'Rechazado') {
+      return res.status(403).json({
+        ok: false,
+        message: 'El invitado rechazó su asistencia al evento.',
+      });
+    }
+
+    await rsvp.update({ estado_invitado: 'Ingresado', fecha_ingreso: sequelize.fn('GETDATE') });
+
+    return res.json({
+      ok: true,
+      message: 'Acceso concedido.',
+      data: {
+        id_rsvp:         rsvp.id_rsvp,
+        nombre_invitado: rsvp.nombre_invitado,
+        correo:          rsvp.correo,
+        nombre_evento:   rsvp.EVENTO?.nombre_evento ?? '',
+        fecha_ingreso:   rsvp.fecha_ingreso,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { registrarRsvp, getInvitados, eliminarInvitado, validarAcceso };

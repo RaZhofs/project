@@ -65,6 +65,7 @@ export const presupuestoApi = {
 };
 
 export const rsvpApi = {
-  registrar:    (id_evento, data) => api.post(`/publico/eventos/${id_evento}/rsvp`, data),
-  getInvitados: (id_evento)       => api.get(`/publico/eventos/${id_evento}/invitados`),
+  registrar:     (id_evento, data) => api.post(`/publico/eventos/${id_evento}/rsvp`, data),
+  getInvitados:  (id_evento)       => api.get(`/publico/eventos/${id_evento}/invitados`),
+  validarAcceso: (token)           => api.post('/rsvp/validar-acceso', { token }),
 };

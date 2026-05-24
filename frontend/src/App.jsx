@@ -9,6 +9,7 @@ import MisTareasPage      from './pages/MisTareasPage';
 import EventoDetallePage  from './pages/EventoDetallePage';
 import RsvpFormPage       from './pages/RsvpFormPage';
 import RsvpSuccessPage    from './pages/RsvpSuccessPage';
+import QrScannerPage      from './pages/QrScannerPage';
 
 // Solo administradores; colaboradores van a /mis-tareas
 function AdminRoute({ children }) {
@@ -50,6 +51,9 @@ export default function App() {
           } />
           <Route path="/eventos/:id/editar" element={
             <AdminRoute><EventoFormPage /></AdminRoute>
+          } />
+          <Route path="/scanner" element={
+            <AdminRoute><QrScannerPage /></AdminRoute>
           } />
 
           {/* Rutas de colaborador */}

@@ -19,6 +19,7 @@ const InvitadoRsvp = sequelize.define('INVITADOS_RSVP', {
     validate: { isIn: [['Confirmado', 'Rechazado', 'Invitado', 'Ingresado']] },
   },
   fecha_registro:  { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
+  fecha_ingreso:   { type: DataTypes.DATE, allowNull: true  },
 });
 
 module.exports = InvitadoRsvp;
